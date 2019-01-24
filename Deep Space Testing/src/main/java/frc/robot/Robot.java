@@ -3,7 +3,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.sensors.Gyro;
+import frc.robot.subsystems.DoubleMotorTestSubsystem;
 import frc.robot.subsystems.HatchPanelManipulator;
+import frc.robot.subsystems.SingleMotorTestSubsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -11,12 +13,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
 
 public class Robot extends TimedRobot {
-  public static WPI_TalonSRX leftDriveMaster;
-  public static WPI_TalonSRX leftDriveFollower;
-  public static WPI_TalonSRX rightDriveMaster;
-  public static WPI_TalonSRX rightDriveFollower;
+  public static WPI_TalonSRX leftDriveMaster, leftDriveFollower, rightDriveMaster, rightDriveFollower;
   public static DifferentialDrive roboDrive;
 
+  public static SingleMotorTestSubsystem singleMotor;
+  public static DoubleMotorTestSubsystem doubleMotor;
   public static HatchPanelManipulator hatchPanelManipulator;
 
   public static Gyro gyro;
@@ -33,6 +34,9 @@ public class Robot extends TimedRobot {
     roboDrive = new DifferentialDrive(new SpeedControllerGroup(leftDriveMaster, leftDriveFollower), new SpeedControllerGroup(rightDriveMaster, rightDriveFollower));
 
     hatchPanelManipulator = new HatchPanelManipulator();
+    singleMotor = new SingleMotorTestSubsystem(RobotMap.CAN.kSingle);
+    doubleMotor = new DoubleMotorTestSubsystem(RobotMap.CAN.kDouble1, RobotMap.CAN.kDouble2);
+
 
     gyro = new Gyro();
     oi = new OI();

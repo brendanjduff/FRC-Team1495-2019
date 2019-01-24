@@ -9,6 +9,9 @@ public class RobotMap {
     public static int kLeftDriveFollower = 3;
     public static int kRightDriveMaster = 1;
     public static int kRightDriveFollower = 4;
+    public static int kSingle = 5;
+    public static int kDouble1 = 6;
+    public static int kDouble2 = 7;
   }
 
   public static class PCM {
@@ -24,4 +27,7 @@ public class RobotMap {
     public static double kDriveMagnitude = .8;
     public static double kDriveRotation = .8;
   }
+
+  public static double kIntakeSpeed = 0.7; 
+  //Change this number between 0 and 1 to change the speed of the motors in any testing. 1 is full speed, 0 means that the motors will not turn. For a single motor, joystick buttons 7 and 8 should be held. For two motors, joystick buttons 11 and 12 should be held.
 }
