@@ -15,7 +15,7 @@ import frc.robot.RobotMap;
 public class DoubleSolenoidTest extends Subsystem {
   public DoubleSolenoid solenoidOne, solenoidTwo;
 
-  public DoubleSolenoidTest(DoubleSolenoid ds1){
+  public DoubleSolenoidTest(DoubleSolenoid ds1) {
     solenoidOne = ds1;
     solenoidTwo = new DoubleSolenoid(RobotMap.PCM.kExtend2, RobotMap.PCM.kRetract2);
   }
