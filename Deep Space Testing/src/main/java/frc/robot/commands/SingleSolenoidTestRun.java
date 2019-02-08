@@ -11,11 +11,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class ModulateHatchPanelManipulator extends Command {
+public class SingleSolenoidTestRun extends Command {
   
   boolean extend;
 
-  public ModulateHatchPanelManipulator(boolean e) {
+  public SingleSolenoidTestRun(boolean e) {
     requires(Robot.hatchPanelManipulator);
     extend = e;
   }

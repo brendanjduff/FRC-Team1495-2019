@@ -11,16 +11,19 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
-public class HatchPanelManipulator extends Subsystem {
 
-  public DoubleSolenoid ds;
+public class DoubleSolenoidTest extends Subsystem {
+  public DoubleSolenoid solenoidOne, solenoidTwo;
 
-  public HatchPanelManipulator() {
-    ds = new DoubleSolenoid(RobotMap.PCM.kHatchPanelManipulatorExtend,RobotMap.PCM.kHatchPanelManipulatorRetract);
+  public DoubleSolenoidTest(DoubleSolenoid ds1){
+    solenoidOne = ds1;
+    solenoidTwo = new DoubleSolenoid(RobotMap.PCM.kExtend2, RobotMap.PCM.kRetract2);
   }
 
   @Override
   public void initDefaultCommand() {
-
+    // Set the default command for a subsystem here.
+    // setDefaultCommand(new MySpecialCommand());
   }
+
 }
