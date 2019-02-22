@@ -9,44 +9,42 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class SingleMotorTest extends Command {
+public class TCCargoClawmp extends Command {
+  
+  Value value;
 
-  double speed;
-  public SingleMotorTest(double s) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    requires(Robot.singleMotor);
-    speed = s;
+  public TCCargoClawmp(Value v) {
+    requires(Robot.cargoClawmp);
+    value = v;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.cargoClawmp.doubleDoubleSolenoid.set(value);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.singleMotor.motor.set(speed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.singleMotor.motor.stopMotor();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.singleMotor.motor.stopMotor();
   }
 }

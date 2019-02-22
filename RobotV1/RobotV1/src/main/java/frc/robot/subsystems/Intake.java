@@ -9,19 +9,16 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import frc.robot.RobotMap;
 /**
  * Add your docs here.
  */
-public class DoubleMotorTestSubsystem extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+public class Intake extends Subsystem {
+  
+  public WPI_TalonSRX talon;
 
-  public WPI_TalonSRX motor1, motor2;
-
-  public DoubleMotorTestSubsystem(int id1, int id2) {
-    motor1 = new WPI_TalonSRX(id1);
-    motor2 = new WPI_TalonSRX(id2);
+  public Intake() {
+    talon = new WPI_TalonSRX(RobotMap.CAN.kIntake);
   }
 
   @Override

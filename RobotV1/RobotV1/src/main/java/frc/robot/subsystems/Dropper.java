@@ -8,19 +8,18 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.robot.RobotMap;
 
 /**
  * Add your docs here.
  */
-public class SingleMotorTestSubsystem extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+public class Dropper extends Subsystem {
 
-  public WPI_TalonSRX motor;
+  public DoubleSolenoid doubledoubleSolenoid;
 
-  public SingleMotorTestSubsystem(int id) {
-    motor = new WPI_TalonSRX(id);
+  public Dropper() {
+    doubledoubleSolenoid = new DoubleSolenoid(RobotMap.PCM.kDropperExtend,RobotMap.PCM.kDropperRetract);
   }
 
   @Override

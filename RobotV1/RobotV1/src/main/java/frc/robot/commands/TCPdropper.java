@@ -7,28 +7,23 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class SingleSolenoidTestRun extends Command {
+public class TCPdropper extends Command {
+    
+  Value value;
   
-  boolean extend;
-
-  public SingleSolenoidTestRun(boolean e) {
-    requires(Robot.hatchPanelManipulator);
-    extend = e;
+  public TCPdropper(Value v) {
+    requires(Robot.pdropper);
+    value = v;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if(extend) {
-      Robot.hatchPanelManipulator.ds.set(Value.kForward);
-    }
-    else {
-      Robot.hatchPanelManipulator.ds.set(Value.kReverse);
-    }
+    Robot.pdropper.doubleSolenoid.set(value);
   }
 
   // Called repeatedly when this Command is scheduled to run

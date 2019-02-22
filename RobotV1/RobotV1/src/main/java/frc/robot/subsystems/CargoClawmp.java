@@ -7,20 +7,23 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.RobotMap;
 
-public class SingleSolenoidTestSystem extends Subsystem {
+/**
+ * Add your docs here.
+ */
+public class CargoClawmp extends Subsystem {
+  public DoubleSolenoid doubleDoubleSolenoid;
 
-  public DoubleSolenoid ds;
-
-  public SingleSolenoidTestSystem() {
-    ds = new DoubleSolenoid(RobotMap.PCM.kExtend1,RobotMap.PCM.kRetract1);
+  public CargoClawmp() {
+    doubleDoubleSolenoid = new DoubleSolenoid(RobotMap.PCM.kCargoClawmpExtend,RobotMap.PCM.kCargoClawmpRetract);
   }
 
   @Override
   public void initDefaultCommand() {
-
+    // Set the default command for a subsystem here.
+    // setDefaultCommand(new MySpecialCommand());
   }
 }

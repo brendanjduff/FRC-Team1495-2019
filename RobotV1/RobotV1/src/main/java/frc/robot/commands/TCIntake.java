@@ -10,14 +10,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class DoubleMotorTest extends Command {
-
+public class TCIntake extends Command {
+   
   double speed;
 
-  public DoubleMotorTest(double s) {
+  public TCIntake(double s) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.doubleMotor);
+    requires(Robot.intake);
     speed = s;
   }
 
@@ -29,8 +29,7 @@ public class DoubleMotorTest extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.doubleMotor.motor1.set(speed);
-    Robot.doubleMotor.motor2.set(speed);
+    Robot.intake.talon.set(speed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -42,15 +41,13 @@ public class DoubleMotorTest extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.doubleMotor.motor1.stopMotor();
-    Robot.doubleMotor.motor2.stopMotor();
+    Robot.intake.talon.stopMotor();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.doubleMotor.motor1.stopMotor();
-    Robot.doubleMotor.motor2.stopMotor();
+    Robot.intake.talon.stopMotor();
   }
 }

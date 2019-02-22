@@ -9,46 +9,49 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class LimitSwitchPneumaticsTest extends Command {
+public class TCLauncher extends Command {
 
-boolean end;
+    double speed;
 
-  public LimitSwitchPneumaticsTest() {
-      requires(Robot.doubleSolenoid);
+    public TCLauncher(double s) {
+      // Use requires() here to declare subsystem dependencies
+      // eg. requires(chassis);
+      requires(Robot.launcher);
+      speed = s;
     }
   
-    
+    // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-      Robot.doubleSolenoid.solenoidOne.set(Value.kReverse);
-      Robot.doubleSolenoid.solenoidTwo.set(Value.kReverse);
     }
   
-    
+    // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-      if(Robot.limitSwitch.get()) {
-        Robot.doubleSolenoid.solenoidOne.set(Value.kForward);
-        Robot.doubleSolenoid.solenoidTwo.set(Value.kForward);
-      }
+      Robot.launcher.leftTalon.set(speed);
+      Robot.launcher.rightTalon.set(-speed);
     }
   
-  
+    // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
       return false;
     }
   
-   
+    // Called once after isFinished returns true
     @Override
     protected void end() {
+      Robot.launcher.leftTalon.stopMotor();
+      Robot.launcher.rightTalon.stopMotor();
     }
   
-    
+    // Called when another command which requires one or more of the same
+    // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+      Robot.launcher.leftTalon.stopMotor();
+      Robot.launcher.rightTalon.stopMotor();
     }
   }
   

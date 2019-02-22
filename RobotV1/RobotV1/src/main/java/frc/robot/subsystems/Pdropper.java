@@ -7,17 +7,19 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.RobotMap;
 
+/**
+ * Add your docs here.
+ */
+public class Pdropper extends Subsystem {
+  
+  public DoubleSolenoid doubleSolenoid;
 
-public class DoubleSolenoidTest extends Subsystem {
-  public DoubleSolenoid solenoidOne, solenoidTwo;
-
-  public DoubleSolenoidTest(DoubleSolenoid ds1) {
-    solenoidOne = ds1;
-    solenoidTwo = new DoubleSolenoid(RobotMap.PCM.kExtend2, RobotMap.PCM.kRetract2);
+  public Pdropper() {
+    doubleSolenoid = new DoubleSolenoid(RobotMap.PCM.kPdropperExtend,RobotMap.PCM.kPdropperRetract);
   }
 
   @Override
@@ -25,5 +27,4 @@ public class DoubleSolenoidTest extends Subsystem {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
-
 }
