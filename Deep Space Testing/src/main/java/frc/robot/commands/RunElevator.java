@@ -2,20 +2,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class TCPanelPgripper extends Command {
-    
-  Value value;
-  
-  public TCPanelPgripper(Value v) {
-    requires(Robot.panelPgripper);
-    value = v;
+public class RunElevator extends Command {
+
+boolean direction;
+
+  public RunElevator(boolean d) {
+    requires(Robot.elevator);
+    direction = d;
   }
 
   @Override
   protected void initialize() {
-    Robot.panelPgripper.doubleSolenoid.set(value);
+    Robot.elevator.runMotor(direction);
   }
 
   @Override
@@ -24,14 +23,16 @@ public class TCPanelPgripper extends Command {
 
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   @Override
   protected void end() {
+    Robot.elevator.stopMotor();
   }
 
   @Override
   protected void interrupted() {
+    Robot.elevator.stopMotor();
   }
 }

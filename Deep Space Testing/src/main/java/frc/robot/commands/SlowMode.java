@@ -2,20 +2,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class TCPdropper extends Command {
-    
-  Value value;
-  
-  public TCPdropper(Value v) {
-    requires(Robot.pdropper);
-    value = v;
-  }
+public class SlowMode extends Command {
+  public SlowMode() {}
 
   @Override
   protected void initialize() {
-    Robot.pdropper.doubleSolenoid.set(value);
+    Robot.slowMode = true;
   }
 
   @Override
@@ -24,14 +17,16 @@ public class TCPdropper extends Command {
 
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   @Override
   protected void end() {
+    Robot.slowMode = false;
   }
 
   @Override
   protected void interrupted() {
+    Robot.slowMode = false;
   }
 }

@@ -2,37 +2,36 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class TCLauncher extends Command {
-  
-  double speed;
+public class LauncherPiston extends Command {
 
-  public TCLauncher(double s) {
-    requires(Robot.launcher);
-    speed = s;
+  Value direction;
+
+  public LauncherPiston(Value v) {
+    //requires(Robot.launcher);
+    direction = v;
   }
 
   @Override
   protected void initialize() {
+    //Robot.launcher.togglePiston(direction);
   }
 
   @Override
   protected void execute() {
-    Robot.launcher.victor.set(speed);
   }
 
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   @Override
   protected void end() {
-    Robot.launcher.victor.stopMotor();
   }
 
   @Override
   protected void interrupted() {
-    Robot.launcher.victor.stopMotor();
   }
 }

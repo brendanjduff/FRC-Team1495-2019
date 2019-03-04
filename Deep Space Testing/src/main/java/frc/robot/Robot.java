@@ -4,41 +4,34 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.cameraserver.CameraServer;
-import frc.robot.subsystems.Lift;
-import frc.robot.subsystems.PanelPgripper;
-import frc.robot.subsystems.Pdropper;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Launcher;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Dropper;
-import frc.robot.subsystems.CargoClawmp;
 import frc.robot.subsystems.Climber;
-import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.Manipulator;
+
 
 public class Robot extends TimedRobot {
   public static WPI_TalonSRX leftDriveMaster, leftDriveFollower, rightDriveMaster, rightDriveFollower;
   public static DifferentialDrive roboDrive;
+  public static boolean slowMode = false;
 
-  public static Lift lift;
-  public static PanelPgripper panelPgripper;
-  public static Pdropper pdropper;
-  public static Launcher launcher;
+  //public static Launcher launcher;
   public static Intake intake;
-  public static Dropper dropper;
-  public static CargoClawmp cargoClawmp;
-  public static Climber frontClimber;
-  public static Climber backClimber;
-
-  public static DigitalInput liftLowerBound;
+  ///public static Climber climber;
+  public static Manipulator manipulator;
+  public static Elevator elevator;
 
   public static OI oi;
   public static PowerDistributionPanel pdp;
   public static Compressor compressor;
-  //public static CameraServer cam;
+  public static CameraServer cam;
 
   @Override
   public void robotInit() {
@@ -48,17 +41,11 @@ public class Robot extends TimedRobot {
     rightDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kRightDriveFollower);
     roboDrive = new DifferentialDrive(new SpeedControllerGroup(leftDriveMaster, leftDriveFollower), new SpeedControllerGroup(rightDriveMaster, rightDriveFollower));
 
-    launcher = new Launcher();
+    //launcher = new Launcher();
     intake = new Intake();
-    lift = new Lift();
-    panelPgripper = new PanelPgripper();
-    pdropper = new Pdropper();
-    dropper = new Dropper();
-    cargoClawmp = new CargoClawmp();
-    frontClimber = new Climber(RobotMap.CAN.kFrontClimber);
-    backClimber = new Climber(RobotMap.CAN.kBackClimber);
-    
-    liftLowerBound = new DigitalInput(RobotMap.DIO.kElevatorLowerBound);
+    //climber = new Climber();
+    manipulator = new Manipulator();
+    elevator = new Elevator();
 
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
@@ -96,7 +83,34 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    roboDrive.arcadeDrive(-oi.driver.getY(Hand.kLeft)*0.75, oi.driver.getX(Hand.kRight)*0.75);
+    /*
+    //XboxController
+    if(!slowMode)
+      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kLeft)*RobotMap.Motors.kSpeedMultiplier, oi.driver.getX(Hand.kRight)*RobotMap.Motors.kRotationMultiplier);
+    else
+      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kLeft)*RobotMap.Motors.kSlowSpeedMultiplier, oi.driver.getX(Hand.kRight)*RobotMap.Motors.kSlowRotationMultiplier);
+    */
+    //XboxController Alternate
+    /*double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
+    if(!slowMode)
+      roboDrive.arcadeDrive(-triggerSum*RobotMap.Motors.kSpeedMultiplier, oi.driver.getX(Hand.kLeft)*RobotMap.Motors.kRotationMultiplier);
+    else
+      roboDrive.arcadeDrive(-triggerSum*RobotMap.Motors.kSlowSpeedMultiplier, oi.driver.getX(Hand.kLeft)*RobotMap.Motors.kSlowRotationMultiplier);
+    /*
+    //Joystick
+    if(!slowMode)
+      roboDrive.arcadeDrive(-oi.driver.getY()*RobotMap.Motors.kSpeedMultiplier, oi.driver.getX()*RobotMap.Motors.kRotationMultiplier);
+    else
+      roboDrive.arcadeDrive(-oi.driver.getY()*RobotMap.Motors.kSlowSpeedMultiplier, oi.driver.getX()*RobotMap.Motors.kSlowRotationMultiplier);
+      */
+      
+      if(!slowMode)
+      roboDrive.arcadeDrive(-oi.boeing.getY()*RobotMap.Motors.kSpeedMultiplier, oi.boeing.getX()*RobotMap.Motors.kRotationMultiplier);
+    else
+      roboDrive.arcadeDrive(-oi.boeing.getY()*RobotMap.Motors.kSlowSpeedMultiplier, oi.boeing.getX()*RobotMap.Motors.kSlowRotationMultiplier);
+      
+
+    //SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
   }
 

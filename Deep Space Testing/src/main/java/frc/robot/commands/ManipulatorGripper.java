@@ -4,18 +4,18 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class TCCargoClawmp extends Command {
-  
-  Value value;
+public class ManipulatorGripper extends Command {
 
-  public TCCargoClawmp(Value v) {
-      requires(Robot.cargoClawmp);
-      value = v;
+  Value direction;
+
+  public ManipulatorGripper(Value v) {
+      requires(Robot.manipulator);
+      direction = v;
     }
   
     @Override
     protected void initialize() {
-      Robot.cargoClawmp.doubleSolenoid.set(value);
+      Robot.manipulator.toggleGripperPiston(direction);
     }
   
     @Override
@@ -35,3 +35,4 @@ public class TCCargoClawmp extends Command {
     protected void interrupted() {
     }
   }
+  

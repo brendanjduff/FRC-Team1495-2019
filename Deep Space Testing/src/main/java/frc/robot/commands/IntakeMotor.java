@@ -3,22 +3,22 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class TCIntake extends Command {
+public class IntakeMotor extends Command {
+  
+  boolean direction;
 
-  Double speed;
-
-  public TCIntake(double s) {
-  requires(Robot.intake);
-  speed = s;
+  public IntakeMotor(boolean d) {
+    requires(Robot.intake);
+    direction = d;
   }
 
   @Override
   protected void initialize() {
+    Robot.intake.runMotor(direction);
   }
 
   @Override
   protected void execute() {
-    Robot.intake.victor.set(speed);
   }
 
   @Override
@@ -28,12 +28,11 @@ public class TCIntake extends Command {
 
   @Override
   protected void end() {
-    Robot.intake.victor.stopMotor();
+    Robot.intake.stopMotor();
   }
 
-  
   @Override
   protected void interrupted() {
-    Robot.intake.victor.stopMotor();
+    Robot.intake.stopMotor();
   }
 }
