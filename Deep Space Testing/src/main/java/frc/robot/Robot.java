@@ -129,21 +129,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-        /*
-    //Xbox Controller
-        if (!slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(!slowMode && reverseMode)
-      roboDrive.arcadeDrive(oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    else if(slowMode && reverseMode)
-      roboDrive.arcadeDrive(oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    */
 
     // XboxController Alternate
     double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
