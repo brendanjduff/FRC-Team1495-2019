@@ -1,22 +1,18 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Intake extends Subsystem {
-  WPI_VictorSPX motor;
-  DoubleSolenoid piston;
+  WPI_TalonSRX motor;
 
   public Intake() {
-    motor = new WPI_VictorSPX(RobotMap.CAN.kIntake);
-    piston = new DoubleSolenoid(RobotMap.PCM.kIntakeForward,RobotMap.PCM.kIntakeReverse);
+    motor = new WPI_TalonSRX(RobotMap.CAN.kIntake);
   }
 
   public void runMotor(boolean direction) {
-    if(direction)
+    if (direction)
       motor.set(RobotMap.Motors.kIntakeSpeed);
     else
       motor.set(-RobotMap.Motors.kIntakeSpeed);
@@ -26,10 +22,7 @@ public class Intake extends Subsystem {
     motor.stopMotor();
   }
 
-  public void togglePiston(Value v) {
-    piston.set(v);
-  }
-
   @Override
-  public void initDefaultCommand() {}
+  public void initDefaultCommand() {
+  }
 }

@@ -3,13 +3,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class ToggleSlowMode extends Command {
-  public ToggleSlowMode() {
+public class RunIntake extends Command {
+
+  boolean direction;
+
+  public RunIntake(boolean d) {
+    requires(Robot.intake);
+    direction = d;
   }
 
   @Override
   protected void initialize() {
-    Robot.slowMode = !Robot.slowMode;
+    Robot.intake.runMotor(direction);
   }
 
   @Override
@@ -23,9 +28,11 @@ public class ToggleSlowMode extends Command {
 
   @Override
   protected void end() {
+    Robot.intake.stopMotor();
   }
 
   @Override
   protected void interrupted() {
+    Robot.intake.stopMotor();
   }
 }

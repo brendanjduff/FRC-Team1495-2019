@@ -5,7 +5,7 @@ import frc.robot.Robot;
 
 public class RunElevator extends Command {
 
-boolean direction;
+  boolean direction;
 
   public RunElevator(boolean d) {
     requires(Robot.elevator);

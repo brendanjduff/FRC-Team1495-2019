@@ -9,39 +9,39 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class IntakeCargo extends Command {
-
-  public IntakeCargo() {
-    requires(Robot.intake);
-    requires(Robot.iExtender);
+public class ZeroElevator extends Command {
+  public ZeroElevator() {
+    requires(Robot.elevator);
   }
 
+  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.iExtender.setPiston(Value.kForward);
-    Robot.intake.runMotor(false);
+    Robot.elevator.setPositionZero(); //runMotor downwards
   }
 
+  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
   }
 
+  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true; //when hit lowerbound limit switch
   }
 
+  // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.iExtender.setPiston(Value.kReverse);
-    Robot.intake.stopMotor();
+    //setpositionzero
   }
 
+  // Called when another command which requires one or more of the same
+  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.iExtender.setPiston(Value.kReverse);
-    Robot.intake.stopMotor();
+    //setpositionzero
   }
 }

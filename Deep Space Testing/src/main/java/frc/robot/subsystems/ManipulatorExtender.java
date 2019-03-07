@@ -5,14 +5,14 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class Manipulator extends Subsystem {
+public class ManipulatorExtender extends Subsystem {
 
   DoubleSolenoid piston;
   Value latest = Value.kReverse;
   boolean locked = false;
 
-  public Manipulator() {
-    piston = new DoubleSolenoid(RobotMap.PCM.kManipulatorForward, RobotMap.PCM.kManipulatorReverse);
+  public ManipulatorExtender() {
+    piston = new DoubleSolenoid(RobotMap.PCM.kMExtenderForward, RobotMap.PCM.kMExtenderReverse);
   }
 
   public void setPiston(Value v) {

@@ -3,18 +3,17 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class IntakeMotor extends Command {
-  
+public class RunLauncher extends Command {
   boolean direction;
 
-  public IntakeMotor(boolean d) {
-    requires(Robot.intake);
+  public RunLauncher(boolean d) {
+    requires(Robot.launcher);
     direction = d;
   }
 
   @Override
   protected void initialize() {
-    Robot.intake.runMotor(direction);
+    Robot.launcher.runMotor(direction);
   }
 
   @Override
@@ -28,11 +27,11 @@ public class IntakeMotor extends Command {
 
   @Override
   protected void end() {
-    Robot.intake.stopMotor();
+    Robot.launcher.stopMotor();
   }
 
   @Override
   protected void interrupted() {
-    Robot.intake.stopMotor();
+    Robot.launcher.stopMotor();
   }
 }

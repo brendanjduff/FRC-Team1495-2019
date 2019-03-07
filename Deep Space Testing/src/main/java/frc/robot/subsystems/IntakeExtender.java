@@ -1,18 +1,18 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class Manipulator extends Subsystem {
+public class IntakeExtender extends Subsystem {
 
   DoubleSolenoid piston;
   Value latest = Value.kReverse;
   boolean locked = false;
 
-  public Manipulator() {
-    piston = new DoubleSolenoid(RobotMap.PCM.kManipulatorForward, RobotMap.PCM.kManipulatorReverse);
+  public IntakeExtender() {
+    piston = new DoubleSolenoid(RobotMap.PCM.kIExtenderForward, RobotMap.PCM.kIExtenderReverse);
   }
 
   public void setPiston(Value v) {

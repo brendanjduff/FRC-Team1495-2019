@@ -2,36 +2,36 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Launcher extends Subsystem {
-  WPI_VictorSPX motor;
-  DoubleSolenoid piston;
+  WPI_VictorSPX leftMotor;
+  WPI_VictorSPX rightMotor;
 
   public Launcher() {
-    motor = new WPI_VictorSPX(RobotMap.CAN.kLauncher);
-    piston = new DoubleSolenoid(RobotMap.PCM.kLauncherForward, RobotMap.PCM.kLauncherReverse);
+    leftMotor = new WPI_VictorSPX(RobotMap.CAN.kLauncherLeft);
+    rightMotor = new WPI_VictorSPX(RobotMap.CAN.kLauncherRight);
   }
 
-  
   public void runMotor(boolean direction) {
-    if(direction)
-      motor.set(RobotMap.Motors.kLauncherSpeedForward);
-    else
-      motor.set(-RobotMap.Motors.kLauncherSpeedReverse);
+    if (direction) {
+      leftMotor.set(-RobotMap.Motors.kLauncherHoldSpeed);
+      rightMotor.set(RobotMap.Motors.kLauncherHoldSpeed);
+  }
+    else {
+      leftMotor.set(RobotMap.Motors.kLauncherSpeedForward);
+      rightMotor.set(-RobotMap.Motors.kLauncherSpeedForward);
+    }
   }
 
   public void stopMotor() {
-    motor.stopMotor();
+    leftMotor.stopMotor();
+    rightMotor.stopMotor();
   }
-
-  public void togglePiston(Value v) {
-    piston.set(v);
-  }
-
 
   @Override
-  public void initDefaultCommand() {}
+  public void initDefaultCommand() {
+  }
 }

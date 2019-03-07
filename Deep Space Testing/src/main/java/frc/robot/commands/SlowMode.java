@@ -4,11 +4,18 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class SlowMode extends Command {
-  public SlowMode() {}
+  boolean toggle;
+
+  public SlowMode(boolean t) {
+    toggle = t;
+  }
 
   @Override
   protected void initialize() {
-    Robot.slowMode = true;
+    if (toggle)
+      Robot.slowMode = !Robot.slowMode;
+    else
+      Robot.slowMode = true;
   }
 
   @Override
@@ -22,11 +29,13 @@ public class SlowMode extends Command {
 
   @Override
   protected void end() {
-    Robot.slowMode = false;
+    if (!toggle)
+      Robot.slowMode = false;
   }
 
   @Override
   protected void interrupted() {
-    Robot.slowMode = false;
+    if (!toggle)
+      Robot.slowMode = false;
   }
 }

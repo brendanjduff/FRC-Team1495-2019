@@ -3,17 +3,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class LauncherMotor extends Command { 
-  boolean direction;
+public class ReverseMode extends Command {
+  boolean toggle;
 
-  public LauncherMotor(boolean d) {
-    //requires(Robot.launcher);
-    direction = d;
+  public ReverseMode(boolean t) {
+    toggle = t;
   }
 
   @Override
   protected void initialize() {
-    //Robot.launcher.runMotor(direction);
+    if (toggle)
+      Robot.reverseMode = !Robot.reverseMode;
+    else
+      Robot.reverseMode = true;
   }
 
   @Override
@@ -27,11 +29,13 @@ public class LauncherMotor extends Command {
 
   @Override
   protected void end() {
-    //Robot.launcher.stopMotor();
+    if (!toggle)
+      Robot.reverseMode = false;
   }
 
   @Override
   protected void interrupted() {
-    //Robot.launcher.stopMotor();
+    if (!toggle)
+      Robot.reverseMode = false;
   }
 }

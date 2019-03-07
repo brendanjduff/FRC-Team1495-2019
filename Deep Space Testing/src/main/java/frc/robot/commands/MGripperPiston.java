@@ -4,18 +4,25 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class LauncherPiston extends Command {
+public class MGripperPiston extends Command {
 
-  Value direction;
+  Value direction = null;
 
-  public LauncherPiston(Value v) {
-    //requires(Robot.launcher);
+  public MGripperPiston() {
+    requires(Robot.manipulator);
+  }
+
+  public MGripperPiston(Value v) {
+    requires(Robot.manipulator);
     direction = v;
   }
 
   @Override
   protected void initialize() {
-    //Robot.launcher.togglePiston(direction);
+    if (direction != null)
+      Robot.manipulator.setPiston(direction);
+    else
+      Robot.manipulator.TogglePiston();
   }
 
   @Override

@@ -1,21 +1,28 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class IntakePiston extends Command {
-  
-  Value direction;
+public class MExtenderPiston extends Command {
 
-  public IntakePiston(Value v) {
-    requires(Robot.intake);
+  Value direction = null;
+
+  public MExtenderPiston() {
+    requires(Robot.mExtender);
+  }
+
+  public MExtenderPiston(Value v) {
+    requires(Robot.mExtender);
     direction = v;
   }
 
   @Override
   protected void initialize() {
-    Robot.intake.togglePiston(direction);
+    if (direction != null)
+      Robot.mExtender.setPiston(direction);
+    else
+      Robot.mExtender.TogglePiston();
   }
 
   @Override
