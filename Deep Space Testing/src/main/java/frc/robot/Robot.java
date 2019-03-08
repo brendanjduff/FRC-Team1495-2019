@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
   public static PowerDistributionPanel pdp;
   public static Compressor compressor;
   public static CameraServer cam;
-  public static ReactingLeds leds= new ReactingLeds();
+  public static ReactiveLEDs leds= new ReactiveLEDs();
 
   @Override
   public void robotInit() {
