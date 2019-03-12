@@ -9,30 +9,41 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class SingleMotorTest extends Command {
+public class DoubleSolenoidCommand extends Command {
+  boolean extend; 
+ 
+  public DoubleSolenoidCommand(boolean e) {
 
-  public SingleMotorTest() {
+
+  extend = e;
+
+   requires(Robot.doubleSolenoid);
+
+
+   
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.singleMotor);
-    
   }
+
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
-    Robot.singleMotor.motor.stopMotor();
+  protected void initialize() {//
+    if (extend) {
+      Robot.doubleSolenoid.solenoid1.set(Value.kForward);
+      Robot.doubleSolenoid.solenoid2.set(Value.kForward);
+    }
+    else{
+      Robot.doubleSolenoid.solenoid1.set(Value.kReverse);
+      Robot.doubleSolenoid.solenoid2.set(Value.kReverse);
+    }
   }
 
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-   // Robot.singleMotor.motor.set(speed);
-   if (Robot.photoSwitch.get() == true) {
-    Robot.singleMotor.motor.set(0.5);
-    //Robot.singleMotor.motor.stopMotor();
-   }
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -44,13 +55,12 @@ public class SingleMotorTest extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.singleMotor.motor.stopMotor();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.singleMotor.motor.stopMotor();
   }
 }
+

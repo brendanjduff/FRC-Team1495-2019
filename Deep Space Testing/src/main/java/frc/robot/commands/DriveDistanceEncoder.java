@@ -10,39 +10,43 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class DoubleMotorTest extends Command {
-
-  double speed;
-
-  public DoubleMotorTest(double s) {
-    requires(Robot.doubleMotor);
-    speed = s;
+public class DriveDistanceEncoder extends Command {
+  public static double DistancePerRevolution = 6; //Wheel Diameter
+  public static double PulsesPerRevolution = 4096;
+  public static double DistancePerPulse = DistancePerRevolution / PulsesPerRevolution;
+   
+  public DriveDistanceEncoder() {
+    
   }
 
+  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
   }
 
+  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.doubleMotor.motor1.set(speed);
-    Robot.doubleMotor.motor2.set(speed);
+    do {
+    Robot.roboDrive.arcadeDrive(0.8, 0.8);
+    } while (true);
+
   }
 
+  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     return false;
   }
 
+  // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.doubleMotor.motor1.stopMotor();
-    Robot.doubleMotor.motor2.stopMotor();
   }
 
+  // Called when another command which requires one or more of the same
+  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.doubleMotor.motor1.stopMotor();
-    Robot.doubleMotor.motor2.stopMotor();
   }
 }

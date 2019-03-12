@@ -5,6 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/*
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -53,3 +54,5 @@ public class ModulateHatchPanelManipulator extends Command {
   protected void interrupted() {
   }
 }
+
+*/

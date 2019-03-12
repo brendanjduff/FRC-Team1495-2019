@@ -9,14 +9,21 @@ public class RobotMap {
     public static int kLeftDriveFollower = 3;
     public static int kRightDriveMaster = 1;
     public static int kRightDriveFollower = 4;
-    public static int kSingle = 5;
+
+    public static int kSingle = 2;
     public static int kDouble1 = 6;
     public static int kDouble2 = 7;
   }
 
   public static class PCM {
-    public static int kHatchPanelManipulatorExtend = 0;
-    public static int kHatchPanelManipulatorRetract = 1;
+    public static int kExtend1 = 0;
+    public static int kRetract1 = 1;
+    public static int kExtend2 = 4;
+    public static int kRetract2 = 5;
+  }
+
+  public static class PWM {
+    public static final int kLimitSwitch = 0;
   }
 
   public static class ControllerPort {
@@ -24,8 +31,10 @@ public class RobotMap {
   }
   
   public static class Multipliers {
-    public static double kDriveMagnitude = .8;
-    public static double kDriveRotation = .8;
+    public static double kWheelDiameter = 6.0;
+    public static int kPPR = 360;
+    public static double kDriveMagnitude = 0.8;
+    public static double kDriveRotation = 0.8;
   }
 
   public static double kIntakeSpeed = 0.7; 
