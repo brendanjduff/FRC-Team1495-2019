@@ -1,41 +1,47 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.sensors.Gyro;
-import frc.robot.subsystems.DoubleMotorTestSubsystem;
-import frc.robot.subsystems.DoubleSolenoidTest;
-//import frc.robot.subsystems.EncoderTest;
-//import frc.robot.subsystems.HatchPanelManipulator;
-//import frc.robot.subsystems.LimitSwitchTest
-import frc.robot.subsystems.SingleMotorTestSubsystem;
-
-import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Launcher;
+import frc.robot.subsystems.ManipulatorExtender;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeExtender;
+import frc.robot.subsystems.BackClimber;
+import frc.robot.subsystems.Manipulator;
+import frc.robot.subsystems.FrontClimber;
+
 public class Robot extends TimedRobot {
   public static WPI_TalonSRX leftDriveMaster, leftDriveFollower, rightDriveMaster, rightDriveFollower;
   public static DifferentialDrive roboDrive;
-  public static DigitalInput limitSwitchOn, limitSwitchOff;
-  public static SingleMotorTestSubsystem singleMotor;
-  public static DoubleMotorTestSubsystem doubleMotor;
-  //public static HatchPanelManipulator hatchPanelManipulator;
-  //public static LimitSwitchTest limitSwitchTest;
+  public static boolean slowMode = false;
+  public static boolean defenseMode = true;
+  public static boolean reverseMode = false;
 
-  public static DigitalInput photoSwitch;
+  public static Elevator elevator;
+  public static Manipulator manipulator;
+  public static ManipulatorExtender mExtender;
+  public static Intake intake;
+  public static IntakeExtender iExtender;
+  public static Launcher launcher;
+  public static FrontClimber fClimber;
+  public static BackClimber bClimber;
 
-  public static DoubleSolenoidTest doubleSolenoid;
-
-  public static Gyro gyro;
   public static OI oi;
-  public PowerDistributionPanel pdp;
+  public static PowerDistributionPanel pdp;
   public static Compressor compressor;
   public static CameraServer cam;
+  public static ReactiveLEDs leds= new ReactiveLEDs();
 
   @Override
   public void robotInit() {
@@ -43,25 +49,22 @@ public class Robot extends TimedRobot {
     leftDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kLeftDriveFollower);
     rightDriveMaster = new WPI_TalonSRX(RobotMap.CAN.kRightDriveMaster);
     rightDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kRightDriveFollower);
-    roboDrive = new DifferentialDrive(new SpeedControllerGroup(leftDriveMaster, leftDriveFollower), new SpeedControllerGroup(rightDriveMaster, rightDriveFollower));
+    roboDrive = new DifferentialDrive(new SpeedControllerGroup(leftDriveMaster, leftDriveFollower),
+        new SpeedControllerGroup(rightDriveMaster, rightDriveFollower));
 
-    //hatchPanelManipulator = new HatchPanelManipulator();
-    singleMotor = new SingleMotorTestSubsystem(RobotMap.CAN.kSingle);
-    doubleMotor = new DoubleMotorTestSubsystem(RobotMap.CAN.kDouble1, RobotMap.CAN.kDouble2);
+    elevator = new Elevator();
+    manipulator = new Manipulator();
+    mExtender = new ManipulatorExtender();
+    intake = new Intake();
+    iExtender = new IntakeExtender();
+    launcher = new Launcher();
+    fClimber = new FrontClimber();
+    bClimber = new BackClimber();
 
-    doubleSolenoid = new DoubleSolenoidTest();
-    
-   // limitSwitchOn = new DigitalInput(0);
-   // limitSwitchOff = new DigitalInput(1);
-
-    photoSwitch = new DigitalInput(0);
-
-    gyro = new Gyro();
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
     pdp.clearStickyFaults();
     compressor = new Compressor(RobotMap.CAN.kPCM);
-
     cam = CameraServer.getInstance();
     cam.startAutomaticCapture("cam1", 0);
   }
@@ -81,10 +84,44 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    // grip game pieces that are within robot. Set all solenoids to correct value.
+    // Disable defense mode.
   }
 
   @Override
   public void autonomousPeriodic() {
+    /*
+    //Xbox Controller
+        if (!slowMode && !reverseMode)
+      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+    else if(!slowMode && reverseMode)
+      roboDrive.arcadeDrive(oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+    else if(slowMode && !reverseMode)
+      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSlowSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+    else if(slowMode && reverseMode)
+      roboDrive.arcadeDrive(oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSlowSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+    */
+
+    // XboxController Alternate
+    double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
+    if (!slowMode && !reverseMode)
+      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+    else if(!slowMode && reverseMode)
+      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+    else if(slowMode && !reverseMode)
+      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+    else if(slowMode && reverseMode)
+      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+
+    SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
   }
 
@@ -94,7 +131,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    roboDrive.arcadeDrive(oi.joystick.getY()*RobotMap.Multipliers.kDriveMagnitude, oi.joystick.getX()*RobotMap.Multipliers.kDriveRotation);
+
+    // XboxController Alternate
+    double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
+    if (!slowMode && !reverseMode)
+      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+    else if(!slowMode && reverseMode)
+      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+    else if(slowMode && !reverseMode)
+      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+    else if(slowMode && reverseMode)
+      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
+          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+
+    SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
   
 

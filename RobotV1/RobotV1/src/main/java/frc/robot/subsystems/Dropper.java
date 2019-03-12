@@ -4,24 +4,27 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
-/*
+
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.RobotMap;
 
-public class HatchPanelManipulator extends Subsystem {
+/**
+ * Add your docs here.
+ */
+public class Dropper extends Subsystem {
 
-  public DoubleSolenoid ds;
+  public DoubleSolenoid doubledoubleSolenoid;
 
-  public HatchPanelManipulator() {
-    ds = new DoubleSolenoid(RobotMap.PCM.kExtend2,RobotMap.PCM.kRetract2);
+  public Dropper() {
+    doubledoubleSolenoid = new DoubleSolenoid(RobotMap.PCM.kDropperExtend,RobotMap.PCM.kDropperRetract);
   }
 
   @Override
   public void initDefaultCommand() {
-
+    // Set the default command for a subsystem here.
+    // setDefaultCommand(new MySpecialCommand());
   }
 }
-*/
