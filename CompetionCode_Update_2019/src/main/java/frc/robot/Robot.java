@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -38,11 +39,11 @@ public class Robot extends TimedRobot {
   public static BackClimber bClimber;
   public static ClimberWheels cWheels;
   public static RobotVision vision;
+  public static NetworkTableInstance ntinst;
 
   public static OI oi;
   public static PowerDistributionPanel pdp;
   public static Compressor compressor;
-  public static CameraServer cam;
 
   @Override
   public void robotInit() {
@@ -62,14 +63,12 @@ public class Robot extends TimedRobot {
     fClimber = new FrontClimber();
     bClimber = new BackClimber();
     cWheels = new ClimberWheels();
-    vision = new RobotVision();
+    vision = RobotVision.getInstance();
 
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
     pdp.clearStickyFaults();
     compressor = new Compressor(RobotMap.CAN.kPCM);
-    cam = CameraServer.getInstance();
-    cam.startAutomaticCapture("cam1", 0);
   }
 
   @Override
