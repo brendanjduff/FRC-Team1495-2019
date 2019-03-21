@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Notifier;
 
 public class ReactiveLEDs {
 
-	I2C i2;
+	private I2C i2;
 
 	public ArrayList<String> cmdQueue = new ArrayList<String>();
 	DigitalInput limit = new DigitalInput(0);

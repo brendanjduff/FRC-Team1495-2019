@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
   public static FrontClimber fClimber;
   public static BackClimber bClimber;
   public static ClimberWheels cWheels;
+  public static RobotVision vision;
 
   public static OI oi;
   public static PowerDistributionPanel pdp;
@@ -61,6 +62,7 @@ public class Robot extends TimedRobot {
     fClimber = new FrontClimber();
     bClimber = new BackClimber();
     cWheels = new ClimberWheels();
+    vision = new RobotVision();
 
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
