@@ -45,10 +45,11 @@ public class RobotMap {
   }
 
   public static class Motors {
+    public static final double kTurboSpeedMultiplier = 1.0;
     public static final double kSpeedMultiplier = 0.8;
     public static final double kSlowSpeedMultiplier = 0.6;
     public static final double kRotationMultiplier = 0.65;
-    public static final double kSlowRotationMultiplier = 0.45;
+    public static final double kSlowRotationMultiplier = 0.5;
 
     public static final double kIntakeSpeed = 0.6;
     public static final double kLauncherSpeedForward = 1;
@@ -57,7 +58,6 @@ public class RobotMap {
     public static final double kClimberWheelsSpeed = 0.8;
     public static final double kClimberFastSpeed = 1;
     public static final double kClimberSlowSpeed = 0.85;
-    public static final double kClimberHoldSpeed = 0.15;
 
     public static final double kManualElevatorSpeed = 1;
   }

@@ -9,7 +9,7 @@ public class ToggleReverseMode extends Command {
 
   @Override
   protected void initialize() {
-      Robot.reverseMode = !Robot.reverseMode;
+      Robot.driveBase.toggleReverseMode();
   }
 
   @Override

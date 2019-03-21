@@ -18,7 +18,7 @@ public class ZeroElevator extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    //Robot.elevator.setPositionZero(); //runMotor downwards
+    Robot.elevator.setPositionZero(); //runMotor downwards
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -9,7 +9,7 @@ public class ToggleSlowMode extends Command {
 
   @Override
   protected void initialize() {
-      Robot.slowMode = !Robot.slowMode;
+      Robot.driveBase.toggleSlowMode();
   }
 
   @Override

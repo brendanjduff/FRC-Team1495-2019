@@ -22,21 +22,21 @@ public class MoveElevatorToPosition extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    //Robot.elevator.setTargetPosition(target);
+    Robot.elevator.setTargetPosition(target);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //Robot.elevator.positionControl();
+    Robot.elevator.positionControl();
     // protect movement using limit switches
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    //return Robot.elevator.isAtPosition();
-    return false;
+    return Robot.elevator.isAtPosition();
+   //return false;
   }
 
   // Called once after isFinished returns true

@@ -35,23 +35,23 @@ public class Elevator extends Subsystem {
     motor.configPeakOutputReverse(-1, 0);
     
     motor.setNeutralMode(NeutralMode.Brake);
-/*
+
     motor.selectProfileSlot(0, 0);
     motor.config_kP(0, 0, 0);
     motor.config_kI(0, 0, 0);
     motor.config_kD(0, 0, 0);
     motor.config_kF(0, 0, 0);
-    motor.configForwardSoftLimitThreshold(RobotMap.ElevatorPID.kForwardSoftLimitThreshold,0);
-    motor.configForwardSoftLimitEnable(false, 0);
-    motor.configReverseSoftLimitThreshold(RobotMap.ElevatorPID.kReverseSoftLimitThreshold, 0);
-    motor.configReverseSoftLimitEnable(false, 0);
-*/
+    //motor.configForwardSoftLimitThreshold(RobotMap.ElevatorPID.kForwardSoftLimitThreshold,0);
+    //motor.configForwardSoftLimitEnable(false, 0);
+    //motor.configReverseSoftLimitThreshold(RobotMap.ElevatorPID.kReverseSoftLimitThreshold, 0);
+    //motor.configReverseSoftLimitEnable(false, 0);
+
     lowerBound = new DigitalInput(RobotMap.DIO.kElevatorLowerBound);
     upperBound = new DigitalInput(RobotMap.DIO.kElevatorUpperBound);
 
     //zeroElevatorPosition();
   }
-/*
+
   public void setTargetPosition(int targetPos) {
     targetPosition = targetPos;
   }
@@ -59,26 +59,26 @@ public class Elevator extends Subsystem {
   public int getTargetPosition() {
     return targetPosition;
   }
-*/
+
   public int getPosition() {
     return motor.getSelectedSensorPosition();
   }
-/*
+
   public boolean isAtPosition() {
     return Math.abs(getPosition() - targetPosition) < RobotMap.ElevatorPID.kPositionTolerance;
   }
-*/
+
   public void manualControl(boolean direction) {
     if (direction && !lowerBound.get())
       motor.set(ControlMode.PercentOutput, -RobotMap.Motors.kManualElevatorSpeed);
     else if(!direction && !upperBound.get())
       motor.set(ControlMode.PercentOutput, RobotMap.Motors.kManualElevatorSpeed);
   }
-/*
+
   public void positionControl() {
     motor.set(ControlMode.Position, targetPosition);
   }
-*/
+
   public void checkLimits(boolean direction) {
     if(direction && lowerBound.get())
       motor.stopMotor();
@@ -89,7 +89,7 @@ public class Elevator extends Subsystem {
   public void stopMotor() {
     motor.stopMotor();
   }
-/*
+
   public void setPositionZero() {
     motor.setSelectedSensorPosition(0);
   }
@@ -98,7 +98,7 @@ public class Elevator extends Subsystem {
     //lower to limit switch
     motor.setSelectedSensorPosition(0);
   }
-*/
+
   @Override
   public void initDefaultCommand() {
   }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.HoldTurboMode;
 import frc.robot.commands.LoadCargoFromGround;
 import frc.robot.commands.MExtenderPiston;
 import frc.robot.commands.MGripperPiston;
@@ -21,34 +22,35 @@ import frc.robot.commands.ToggleSlowMode;
 
 public class OI {
 
-    public XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
-    public Joystick operator = new Joystick(RobotMap.ControllerPort.kOperator);
-    public Joystick climber = new Joystick(RobotMap.ControllerPort.kClimber);
+  public XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
+  public Joystick operator = new Joystick(RobotMap.ControllerPort.kOperator);
+  public Joystick climber = new Joystick(RobotMap.ControllerPort.kClimber);
 
-    public Button slowMode = new JoystickButton(driver, 5);
-    public Button defenseMode = new JoystickButton(driver, 7);
-    public Button reverseMode = new JoystickButton(driver, 6);
+  public Button turboMode = new JoystickButton(driver, 2);
+  public Button slowMode = new JoystickButton(driver, 5);
+  public Button defenseMode = new JoystickButton(driver, 7);
+  public Button reverseMode = new JoystickButton(driver, 6);
 
-    public Button scoreCargo = new JoystickButton(operator, 1);
-    public Button loadCargoFromGround = new JoystickButton(operator, 2);
-    public Button elevatorForward = new JoystickButton(operator, 3);
-    public Button toggleMGripper = new JoystickButton(operator, 4);
-    public Button elevatorReverse = new JoystickButton(operator, 5);
-    public Button toggleMExtender = new JoystickButton(operator, 6);
+  public Button scoreCargo = new JoystickButton(operator, 1);
+  public Button loadCargoFromGround = new JoystickButton(operator, 2);
+  public Button elevatorForward = new JoystickButton(operator, 3);
+  public Button toggleMGripper = new JoystickButton(operator, 4);
+  public Button elevatorReverse = new JoystickButton(operator, 5);
+  public Button toggleMExtender = new JoystickButton(operator, 6);
 
-    //public Button zero = new JoystickButton(operator, 7);
-    //public Button positionControlTest = new JoystickButton(operator, 8);
+  public Button zero = new JoystickButton(operator, 7);
 
-    public Button cWheelsForward = new JoystickButton(climber, 1);
-    public Button cWheelsReverse = new JoystickButton(climber, 2);
-    public Button fClimberReverse = new JoystickButton(climber, 10);  
-    public Button fClimberForward = new JoystickButton(climber, 9); 
-    public Button bClimberReverse = new JoystickButton(climber, 12); 
-    public Button bClimberForward = new JoystickButton(climber, 11); 
-    public Button climbersForward = new JoystickButton(climber, 7); 
-    public Button climbersReverse = new JoystickButton(climber, 8);
+  public Button cWheelsForward = new JoystickButton(climber, 1);
+  public Button cWheelsReverse = new JoystickButton(climber, 2);
+  public Button fClimberReverse = new JoystickButton(climber, 10);  
+  public Button fClimberForward = new JoystickButton(climber, 9); 
+  public Button bClimberReverse = new JoystickButton(climber, 12); 
+  public Button bClimberForward = new JoystickButton(climber, 11); 
+  public Button climbersForward = new JoystickButton(climber, 7); 
+  public Button climbersReverse = new JoystickButton(climber, 8);
 
-  public OI() {                                                                                                                                                                                                                                                                                                                                                       
+  public OI() {  
+    turboMode.whileHeld(new HoldTurboMode());                                                                                                                                                                                                                                                                                                                                                     
     slowMode.whenPressed(new ToggleSlowMode());
     defenseMode.whenPressed(new ToggleDefenseMode());
     reverseMode.whenPressed(new ToggleReverseMode());
@@ -63,7 +65,6 @@ public class OI {
     elevatorReverse.whileHeld(new RunElevator(false));
     elevatorReverse.whileHeld(new RunIntake(false));
     //zero.whenPressed(new ZeroElevator());
-    //positionControlTest.whileHeld(new MoveElevatorToPosition(-5000));
 
     cWheelsForward.whileHeld(new RunClimberWheels(true));
     cWheelsReverse.whileHeld(new RunClimberWheels(false));
