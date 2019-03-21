@@ -91,20 +91,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
-    // XboxController Alternate
-    double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
-    if (!slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(!slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    else if(slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+   driverJoystickUpdate();
 
     SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
@@ -117,20 +104,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    // XboxController Alternate
-    double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
-    if (!slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(!slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    else if(slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+    driverJoystickUpdate();
 
     SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
@@ -139,4 +113,21 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
+    private void driverJoystickUpdate()
+    {
+        double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
+        if (!slowMode && !reverseMode)
+            roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
+                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+        else if(!slowMode && reverseMode)
+            roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
+                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+        else if(slowMode && !reverseMode)
+            roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
+                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+        else if(slowMode && reverseMode)
+            roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
+                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+
+    }
 }
