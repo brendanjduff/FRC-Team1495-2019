@@ -1,8 +1,9 @@
-package frc.robot;
+package frc.robot.vision;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
+import java.util.ArrayList;
 
 
 public class RobotVision
@@ -10,7 +11,8 @@ public class RobotVision
 
     public enum Value {Count, Width,Angle,Area,X,Y,Height,All}
 
-
+    private ArrayList<RoboTarget> leftTargets = new ArrayList<>();
+    private ArrayList<RoboTarget> rightTargets = new ArrayList<>();
 
 
     /*
@@ -35,7 +37,7 @@ public class RobotVision
     private double[] targetY;
     private double[] targetHeight;
 
-    static synchronized RobotVision getInstance()
+    public static synchronized RobotVision getInstance()
     {
         if(inst == null)
         {
@@ -51,10 +53,19 @@ public class RobotVision
     }
 
 
+
+
     public boolean isReady()
     {
         updateAllValues();
         return targetCount >= 2;
+    }
+
+    public boolean isLeftTarget(RoboTarget item)
+    {
+
+
+        return false;
     }
 
     public int getLowerAngle()

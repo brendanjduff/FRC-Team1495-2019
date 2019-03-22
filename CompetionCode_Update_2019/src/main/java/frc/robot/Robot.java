@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Launcher;
 import frc.robot.subsystems.ManipulatorExtender;
@@ -21,6 +20,7 @@ import frc.robot.subsystems.BackClimber;
 import frc.robot.subsystems.ClimberWheels;
 import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.FrontClimber;
+import frc.robot.vision.RobotVision;
 
 public class Robot extends TimedRobot {
   public static WPI_TalonSRX leftDriveMaster, leftDriveFollower, rightDriveMaster, rightDriveFollower;
