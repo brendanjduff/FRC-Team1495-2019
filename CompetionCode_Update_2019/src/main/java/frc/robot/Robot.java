@@ -64,11 +64,16 @@ public class Robot extends TimedRobot {
     bClimber = new BackClimber();
     cWheels = new ClimberWheels();
     vision = RobotVision.getInstance();
+    ntinst = NetworkTableInstance.getDefault();
+
+    vision.setVisionTable(ntinst.getTable("PiVision"));
 
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
     pdp.clearStickyFaults();
     compressor = new Compressor(RobotMap.CAN.kPCM);
+
+
   }
 
   @Override
@@ -102,11 +107,47 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
   }
 
+  public boolean hasFailed = false;
+  public double goodEnough = 3;
+  public double expectedXCentered = 213;
   @Override
   public void teleopPeriodic() {
 
+    SmartDashboard.putBoolean("Is Auto active", OI.driver.getAButton());
+    if(OI.driver.getAButton())
+    {
+      if(vision.isReady())
+      {
+        //GetLeftTarget
+        int targetE = vision.getLowerAngle();
+
+        SmartDashboard.putBoolean("In DeadZone", Math.abs(vision.getTargetX()[targetE] - expectedXCentered) > goodEnough);
+        if(Math.abs(vision.getTargetX()[targetE] - expectedXCentered) > goodEnough)
+        {
+          //If diff is positive then we've overshot right
+          double difference = expectedXCentered - vision.getTargetX()[targetE];
+          if(difference > 0)
+          {
+            roboDrive.arcadeDrive(.2,.2);
+          }else
+            {
+              roboDrive.arcadeDrive(.2,-.2);
+            }
+        }
+        else
+          {
+          roboDrive.arcadeDrive(-.5,0);
+        }
+      } else
+      {
+        roboDrive.arcadeDrive(-.5,0);
+      }
+    }
+    else
     driverJoystickUpdate();
 
+    SmartDashboard.putBoolean("Vision Status", vision.isReady());
+    SmartDashboard.putBoolean("Has Vision Failed", hasFailed);
     SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
   }

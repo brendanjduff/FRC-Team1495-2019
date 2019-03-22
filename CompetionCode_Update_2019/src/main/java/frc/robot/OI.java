@@ -21,7 +21,7 @@ import frc.robot.commands.ToggleSlowMode;
 
 public class OI {
 
-    public XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
+    public static XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
     public Joystick operator = new Joystick(RobotMap.ControllerPort.kOperator);
     public Joystick climber = new Joystick(RobotMap.ControllerPort.kClimber);
 
