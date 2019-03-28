@@ -2,22 +2,18 @@ package frc.robot.vision;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.ArrayList;
+import static frc.robot.Robot.roboDrive;
 
 
-public class RobotVision
-{
+public class RobotVision {
 
-    public enum Value {Count, Width,Angle,Area,X,Y,Height,All}
-
-    private ArrayList<RoboTarget> leftTargets = new ArrayList<>();
-    private ArrayList<RoboTarget> rightTargets = new ArrayList<>();
-
+    public enum Value {Count, Width, Angle, Area, X, Y, Height, All}
 
     /*
-    * Vision Target Variables
-    */
+     * Vision Target Variables
+     */
     private static RobotVision inst;
     private NetworkTable visionTable;
     private NetworkTableEntry visionWidth;
@@ -27,53 +23,99 @@ public class RobotVision
     private NetworkTableEntry visionX;
     private NetworkTableEntry visionY;
     private NetworkTableEntry visionHeight;
-    private final double[] DEF_ARR = {0,0};
+    private final double[] DEF_ARR = {0, 0};
 
     private int targetCount;
-    private double[] targetWidth;
-    private double[] targetAngle;
-    private double[] targetArea;
-    private double[] targetX;
-    private double[] targetY;
-    private double[] targetHeight;
+    private double[] targetWidthArray;
+    private double[] targetAngleArray;
+    private double[] targetAreaArray;
+    private double[] targetXArray;
+    private double[] targetYArray;
+    private double[] targetHeightArray;
 
-    public static synchronized RobotVision getInstance()
-    {
-        if(inst == null)
-        {
+    public static synchronized RobotVision getInstance() {
+        if (inst == null) {
             inst = new RobotVision();
         }
         return inst;
     }
 
     //Prevents Users from creating separate vision Thread
-    private RobotVision()
-    {
+    private RobotVision() {
         visionTable = null;
     }
 
 
+    public void runVisionGuidanceUpdate(int mode) {
+        updateAllValues();
+        switch (mode) {
+            case 0:
+                version1();
+                break;
+            case 1:
+                yawDifferential();
+                break;
+        }
+    }
+
+    public double goodEnough = 3;
+    public double expectedXCentered = 213;
+
+    private void version1() {
+        if (isReady()) {
+            //GetLeftTarget
+            int targetE = getLowerAngle();
+
+            SmartDashboard.putBoolean("In DeadZone", Math.abs(targetXArray[targetE] - expectedXCentered) > goodEnough);
+            if (Math.abs(targetXArray[targetE] - expectedXCentered) > goodEnough) {
+                //If diff is positive then we've overshot right
+                double difference = expectedXCentered - targetXArray[targetE];
+                if (difference > 0) {
+                    roboDrive.arcadeDrive(.2, .2);
+                } else {
+                    roboDrive.arcadeDrive(.2, -.2);
+                }
+            } else {
+                roboDrive.arcadeDrive(-.5, 0);
+            }
+        } else {
+            roboDrive.arcadeDrive(-.5, 0);
+        }
+    }
 
 
-    public boolean isReady()
-    {
+    VisionTarget target = null;
+
+    private void yawDifferential() {
+        int e = 0;
+
+        if (target == null && targetCount > 1) {
+            for (int i = 1; i < targetAngleArray.length; i++) {
+                if (targetAngleArray[i] > 50 && targetAreaArray[e] < targetAreaArray[i])
+                    e = i;
+            }
+        } else if (targetCount == 1) {
+            if (targetAreaArray[0] > 50) {
+                e=0;
+
+            } else {
+                return;
+            }
+        }
+        target = updateRoboTarget(0);
+    }
+
+
+    public boolean isReady() {
         updateAllValues();
         return targetCount >= 2;
     }
 
-    public boolean isLeftTarget(RoboTarget item)
-    {
 
-
-        return false;
-    }
-
-    public int getLowerAngle()
-    {
+    public int getLowerAngle() {
         updateAllValues();
-        if(targetCount == 2)
-        {
-            if(targetX[0] < 40)
+        if (targetCount == 2) {
+            if (targetXArray[0] < 40)
                 return 0;
             else
                 return 1;
@@ -83,8 +125,7 @@ public class RobotVision
     }
 
 
-    public void setVisionTable(NetworkTable visionTable)
-    {
+    public void setVisionTable(NetworkTable visionTable) {
         this.visionTable = visionTable;
         visionWidth = (this.visionTable.getEntry("WIDTH"));
         visionAngle = (this.visionTable.getEntry("ANGLE"));
@@ -96,46 +137,32 @@ public class RobotVision
     }
 
 
-    public void updateAllValues()
-    {
-        if(this.visionTable == null)
+    private void updateAllValues() {
+        if (this.visionTable == null)
             return;
 
         targetCount = (int) visionCount.getDouble(0);
-        targetWidth = visionWidth.getDoubleArray(DEF_ARR);
-        targetAngle = visionAngle.getDoubleArray(DEF_ARR);
-        targetArea  = visionArea.getDoubleArray(DEF_ARR);
-        targetX = visionX.getDoubleArray(DEF_ARR);
-        targetY = visionY.getDoubleArray(DEF_ARR);
-        targetHeight = visionHeight.getDoubleArray(DEF_ARR);
+        targetWidthArray = visionWidth.getDoubleArray(DEF_ARR);
+        targetAngleArray = visionAngle.getDoubleArray(DEF_ARR);
+        targetAreaArray = visionArea.getDoubleArray(DEF_ARR);
+        targetXArray = visionX.getDoubleArray(DEF_ARR);
+        targetYArray = visionY.getDoubleArray(DEF_ARR);
+        targetHeightArray = visionHeight.getDoubleArray(DEF_ARR);
     }
 
-    public double[] getTargetWidth() {
-        return targetWidth;
-    }
-
-    public double[] getTargetAngle() {
-        return targetAngle;
-    }
-
-    public double[] getTargetArea() {
-        return targetArea;
-    }
-
-    public double[] getTargetX() {
-        return targetX;
-    }
-
-    public double[] getTargetY() {
-        return targetY;
-    }
-
-    public double[] getTargetHeight() {
-        return targetHeight;
-    }
-
-    public int getTargetCount() {
-        return targetCount;
+    private VisionTarget updateRoboTarget(int i)
+    {
+        updateAllValues();
+        VisionTarget newTarget =  new VisionTarget(
+                i,
+                targetXArray[i],
+                targetYArray[i],
+                targetHeightArray[i],
+                targetWidthArray[i],
+                targetAreaArray[i],
+                targetAngleArray[i]
+                );
+        return newTarget;
     }
 
 }
