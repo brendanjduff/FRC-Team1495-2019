@@ -190,13 +190,17 @@ public class RobotVision {
 
         target = updateRoboTarget(targetIndexSelection);
 
+
         if(target != null) {
             double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / focalLength));
+            SmartDashboard.putNumber("Difference",angleToTarget);
+            SmartDashboard.putBoolean("targetFound", true);
             if (Math.abs(angleToTarget) > angleThreshold) {
                 //TODO Implement roboDrive response if the angle is above the threshold
             }
         }
         else {
+            SmartDashboard.putBoolean("targetFound", false);
             if (targetCount == 0/*TODO get accelerations for the class*/)
                 roboDrive.arcadeDrive(.5, 0);
             else {
