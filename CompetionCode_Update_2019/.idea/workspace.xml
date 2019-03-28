@@ -2,16 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22e9980c-2e59-49a3-b5f1-3e32051f98c0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Gyro.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/CompetionCode_Update_2019_main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/CompetionCode_Update_2019_main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/CompetionCode_Update_2019_test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/CompetionCode_Update_2019_test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Robot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -81,15 +71,21 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="452">
-              <caret line="181" column="8" lean-forward="true" selection-start-line="181" selection-start-column="8" selection-end-line="181" selection-end-column="8" />
+            <state relative-caret-position="773">
+              <caret line="122" column="8" selection-start-line="122" selection-start-column="8" selection-end-line="122" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1239#1240#0" expanded="true" />
                 <element signature="e#1273#1274#0" expanded="true" />
-                <element signature="method#version1#0;class#RobotVision#0" />
+                <element signature="method#runPeriodicUpdate#0;class#RobotVision#0" />
                 <element signature="method#isReady#0;class#RobotVision#0" />
+                <element signature="method#runVisionGuidanceUpdate#0;class#RobotVision#0" />
+                <element signature="method#setNtVisionTable#0;class#RobotVision#0" />
+                <element signature="method#setNtSettingsTable#0;class#RobotVision#0" />
                 <element signature="method#getLowerAngle#0;class#RobotVision#0" />
+                <element signature="method#yawDifferential#0;class#RobotVision#0" />
+                <element signature="method#updateAllValues#0;class#RobotVision#0" />
+                <element signature="method#updateRoboTarget#0;class#RobotVision#0" />
               </folding>
             </state>
           </provider>
@@ -439,12 +435,12 @@
       <workItem from="1553711256172" duration="492000" />
       <workItem from="1553712806435" duration="1585000" />
       <workItem from="1553747801823" duration="395000" />
-      <workItem from="1553748269424" duration="5874000" />
+      <workItem from="1553748269424" duration="6241000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61612000" />
+    <option name="totallyTimeSpent" value="61979000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -590,15 +586,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="452">
-          <caret line="181" column="8" lean-forward="true" selection-start-line="181" selection-start-column="8" selection-end-line="181" selection-end-column="8" />
+        <state relative-caret-position="773">
+          <caret line="122" column="8" selection-start-line="122" selection-start-column="8" selection-end-line="122" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1239#1240#0" expanded="true" />
             <element signature="e#1273#1274#0" expanded="true" />
-            <element signature="method#version1#0;class#RobotVision#0" />
+            <element signature="method#runPeriodicUpdate#0;class#RobotVision#0" />
             <element signature="method#isReady#0;class#RobotVision#0" />
+            <element signature="method#runVisionGuidanceUpdate#0;class#RobotVision#0" />
+            <element signature="method#setNtVisionTable#0;class#RobotVision#0" />
+            <element signature="method#setNtSettingsTable#0;class#RobotVision#0" />
             <element signature="method#getLowerAngle#0;class#RobotVision#0" />
+            <element signature="method#yawDifferential#0;class#RobotVision#0" />
+            <element signature="method#updateAllValues#0;class#RobotVision#0" />
+            <element signature="method#updateRoboTarget#0;class#RobotVision#0" />
           </folding>
         </state>
       </provider>
