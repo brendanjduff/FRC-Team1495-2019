@@ -10,16 +10,8 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Compressor;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.ManipulatorExtender;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakeExtender;
+import frc.robot.subsystems.*;
 import frc.robot.commands.HatchPanelAuto;
-import frc.robot.subsystems.BackClimber;
-import frc.robot.subsystems.ClimberWheels;
-import frc.robot.subsystems.Manipulator;
-import frc.robot.subsystems.FrontClimber;
 import frc.robot.vision.RobotVision;
 
 public class Robot extends TimedRobot {
@@ -40,6 +32,8 @@ public class Robot extends TimedRobot {
   public static ClimberWheels cWheels;
   public static RobotVision vision;
   public static NetworkTableInstance ntinst;
+  public static Gyro gyro;
+
 
   public static OI oi;
   public static PowerDistributionPanel pdp;
@@ -65,8 +59,10 @@ public class Robot extends TimedRobot {
     cWheels = new ClimberWheels();
     vision = RobotVision.getInstance();
     ntinst = NetworkTableInstance.getDefault();
+    gyro = new Gyro();
 
-    vision.setVisionTable(ntinst.getTable("PiVision"));
+    vision.setNtVisionTable(ntinst.getTable("PiVision"));
+    vision.setNtSettingsTable(ntinst.getTable("VisionSettings"));
 
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
@@ -111,6 +107,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     SmartDashboard.putBoolean("Is Auto active", OI.driver.getAButton());
+    vision.runPeriodicUpdate();
     if(OI.driver.getAButton())
     {
       vision.runVisionGuidanceUpdate(0);

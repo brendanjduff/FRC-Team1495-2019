@@ -1,7 +1,9 @@
 package frc.robot.vision;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Robot.roboDrive;
@@ -9,20 +11,32 @@ import static frc.robot.Robot.roboDrive;
 
 public class RobotVision {
 
-    public enum Value {Count, Width, Angle, Area, X, Y, Height, All}
+    private static RobotVision inst = null;
+
+    /*
+    *  Vision Settings
+    */
+    private NetworkTable ntSettingsTable = null;
+
+    private double targetPixel = 339.5;
+    private double focalLength = 550.2;
+    private double angleThreshold = 1;
+
+
+
+
 
     /*
      * Vision Target Variables
      */
-    private static RobotVision inst;
-    private NetworkTable visionTable;
-    private NetworkTableEntry visionWidth;
-    private NetworkTableEntry visionCount;
-    private NetworkTableEntry visionAngle;
-    private NetworkTableEntry visionArea;
-    private NetworkTableEntry visionX;
-    private NetworkTableEntry visionY;
-    private NetworkTableEntry visionHeight;
+    private NetworkTable ntVisionTable = null;
+    private NetworkTableEntry ntVisionWidth;
+    private NetworkTableEntry ntVisionCount;
+    private NetworkTableEntry ntVisionAngle;
+    private NetworkTableEntry ntVisionArea;
+    private NetworkTableEntry ntVisionX;
+    private NetworkTableEntry ntVisionY;
+    private NetworkTableEntry ntVisionHeight;
     private final double[] DEF_ARR = {0, 0};
 
     private int targetCount;
@@ -42,12 +56,11 @@ public class RobotVision {
 
     //Prevents Users from creating separate vision Thread
     private RobotVision() {
-        visionTable = null;
+        ntVisionTable = null;
     }
 
 
     public void runVisionGuidanceUpdate(int mode) {
-        updateAllValues();
         switch (mode) {
             case 0:
                 version1();
@@ -55,11 +68,13 @@ public class RobotVision {
             case 1:
                 yawDifferential();
                 break;
+            default:
+                System.out.println("ERROR! Invalid Driving Mode");
         }
     }
 
-    public double goodEnough = 3;
-    public double expectedXCentered = 213;
+    private double goodEnough = 3;
+    private double expectedXCentered = 213;
 
     private void version1() {
         if (isReady()) {
@@ -84,36 +99,43 @@ public class RobotVision {
     }
 
 
-    VisionTarget target = null;
+    private VisionTarget target = null;
 
     private void yawDifferential() {
-        int e = 0;
+        int targetIndexSelection = 0;
 
-        if (target == null && targetCount > 1) {
-            for (int i = 1; i < targetAngleArray.length; i++) {
-                if (targetAngleArray[i] > 50 && targetAreaArray[e] < targetAreaArray[i])
-                    e = i;
-            }
-        } else if (targetCount == 1) {
-            if (targetAreaArray[0] > 50) {
-                e=0;
+        if (targetCount > 1)
+            for (int i = 1; i < targetAngleArray.length; i++)
+                if (targetAngleArray[i] > 50 && targetAreaArray[targetIndexSelection] < targetAreaArray[i])
+                    targetIndexSelection = i;
+         else //noinspection ConstantConditions
+                    if (targetCount == 1 && targetAngleArray[0] < 50)
+            return;
+        else
+            return;
 
-            } else {
-                return;
-            }
+        target = updateRoboTarget(targetIndexSelection);
+
+        double angleToTarget = Math.toDegrees(Math.atan((target.getX()-targetPixel)/focalLength));
+
+        if(Math.abs(angleToTarget) > angleThreshold)
+        {
+            //TODO Implement roboDrive response if the angle is above the threshold
         }
-        target = updateRoboTarget(0);
+
+
+
     }
 
 
     public boolean isReady() {
-        updateAllValues();
-        return targetCount >= 2;
+        updateVisionTargetData();
+        return targetCount >= 1;
     }
 
 
-    public int getLowerAngle() {
-        updateAllValues();
+    private int getLowerAngle() {
+        updateVisionTargetData();
         if (targetCount == 2) {
             if (targetXArray[0] < 40)
                 return 0;
@@ -125,35 +147,71 @@ public class RobotVision {
     }
 
 
-    public void setVisionTable(NetworkTable visionTable) {
-        this.visionTable = visionTable;
-        visionWidth = (this.visionTable.getEntry("WIDTH"));
-        visionAngle = (this.visionTable.getEntry("ANGLE"));
-        visionArea = (this.visionTable.getEntry("AREA"));
-        visionX = (this.visionTable.getEntry("X"));
-        visionY = (this.visionTable.getEntry("Y"));
-        visionHeight = (this.visionTable.getEntry("HEIGHT"));
-        visionCount = (this.visionTable.getEntry("COUNT"));
+    public void setNtVisionTable(NetworkTable ntVisionTable) {
+        if(this.ntVisionTable != null)
+        {
+            System.out.println("WARNING! Vision table data attempted to be initialized twice! Exiting...");
+            return;
+        }
+        this.ntVisionTable = ntVisionTable;
+        ntVisionWidth = (this.ntVisionTable.getEntry("WIDTH"));
+        ntVisionAngle = (this.ntVisionTable.getEntry("ANGLE"));
+        ntVisionArea = (this.ntVisionTable.getEntry("AREA"));
+        ntVisionX = (this.ntVisionTable.getEntry("X"));
+        ntVisionY = (this.ntVisionTable.getEntry("Y"));
+        ntVisionHeight = (this.ntVisionTable.getEntry("HEIGHT"));
+        ntVisionCount = (this.ntVisionTable.getEntry("COUNT"));
     }
 
 
-    private void updateAllValues() {
-        if (this.visionTable == null)
+
+    public void setNtSettingsTable(NetworkTable ntSettingsTable)
+    {
+        if(this.ntSettingsTable != null) {
+            System.out.println("WARNING! Vision table data attempted to be initialized twice! Exiting...");
+            return;
+        }
+
+        this.ntSettingsTable = ntSettingsTable;
+
+        this.ntSettingsTable.getEntry("FocalLength").getDouble(339.5);
+
+        this.ntSettingsTable.addEntryListener("FocalLength", (table, key, entry, value, flags) ->{
+            focalLength = entry.getValue().getDouble();
+            }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        
+        //TODO Add all the network table vision setting listeners
+
+    }
+
+
+    public void runPeriodicUpdate()
+    {
+        updateVisionTargetData();
+        //TODO Implement SmartDashboard data HERE
+        SmartDashboard.putBoolean("Vision Ready Status", isReady());
+    }
+
+
+
+
+
+    private void updateVisionTargetData() {
+        if (this.ntVisionTable == null)
             return;
 
-        targetCount = (int) visionCount.getDouble(0);
-        targetWidthArray = visionWidth.getDoubleArray(DEF_ARR);
-        targetAngleArray = visionAngle.getDoubleArray(DEF_ARR);
-        targetAreaArray = visionArea.getDoubleArray(DEF_ARR);
-        targetXArray = visionX.getDoubleArray(DEF_ARR);
-        targetYArray = visionY.getDoubleArray(DEF_ARR);
-        targetHeightArray = visionHeight.getDoubleArray(DEF_ARR);
+        targetCount = (int) ntVisionCount.getDouble(0);
+        targetWidthArray = ntVisionWidth.getDoubleArray(DEF_ARR);
+        targetAngleArray = ntVisionAngle.getDoubleArray(DEF_ARR);
+        targetAreaArray = ntVisionArea.getDoubleArray(DEF_ARR);
+        targetXArray = ntVisionX.getDoubleArray(DEF_ARR);
+        targetYArray = ntVisionY.getDoubleArray(DEF_ARR);
+        targetHeightArray = ntVisionHeight.getDoubleArray(DEF_ARR);
     }
 
-    private VisionTarget updateRoboTarget(int i)
-    {
-        updateAllValues();
-        VisionTarget newTarget =  new VisionTarget(
+    private VisionTarget updateRoboTarget(int i) {
+        updateVisionTargetData();
+        return new VisionTarget(
                 i,
                 targetXArray[i],
                 targetYArray[i],
@@ -161,8 +219,7 @@ public class RobotVision {
                 targetWidthArray[i],
                 targetAreaArray[i],
                 targetAngleArray[i]
-                );
-        return newTarget;
+        );
     }
 
 }
