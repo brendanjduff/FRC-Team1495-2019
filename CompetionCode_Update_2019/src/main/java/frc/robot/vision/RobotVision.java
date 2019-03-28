@@ -10,6 +10,8 @@ import static frc.robot.Robot.roboDrive;
 
 public class RobotVision {
 
+    //TODO add documentation
+
     private static RobotVision inst = null;
 
     /*
@@ -19,7 +21,7 @@ public class RobotVision {
 
     private double targetPixel;
     private double focalLength;
-    private double angleThreshold = 1;
+    private double angleThreshold;
 
 
 
@@ -62,15 +64,17 @@ public class RobotVision {
     public void runPeriodicUpdate() {
         updateVisionTargetData();
         //TODO Implement SmartDashboard data HERE
-        SmartDashboard.putBoolean("Vision Ready Status", isReady());
+        SmartDashboard.putBoolean("Vision Target Detection", hasTargets());
     }
 
-    public boolean isReady() {
+    public boolean hasTargets() {
         updateVisionTargetData();
         return targetCount >= 1;
     }
 
     public void runVisionGuidanceUpdate(int mode) {
+        if(!isNTReady())
+            return;
         switch (mode) {
             case 0:
                 version1();
@@ -129,10 +133,15 @@ public class RobotVision {
 
     }
 
+    public boolean isNTReady()
+    {
+        return ntSettingsTable != null && ntVisionTable != null;
+    }
+
     private void version1() {
         double goodEnough = 3;
         double expectedXCentered = 213;
-        if (isReady()) {
+        if (hasTargets()) {
             //GetLeftTarget
             int targetE = getLowerAngle();
 
