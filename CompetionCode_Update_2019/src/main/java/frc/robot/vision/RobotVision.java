@@ -17,8 +17,8 @@ public class RobotVision {
     */
     private NetworkTable ntSettingsTable = null;
 
-    private double targetPixel = 339.5;
-    private double focalLength = 550.2;
+    private double targetPixel;
+    private double focalLength;
     private double angleThreshold = 1;
 
 
@@ -107,17 +107,27 @@ public class RobotVision {
 
         this.ntSettingsTable = ntSettingsTable;
 
-        this.ntSettingsTable.getEntry("FocalLength").getDouble(339.5);
 
         this.ntSettingsTable.addEntryListener("FocalLength", (table, key, entry, value, flags) ->{
             focalLength = entry.getValue().getDouble();
+            System.out.println("Focal Length Value updated to: " + focalLength);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("FocalLength").getDouble(550.0);
 
-        //TODO Add all the network table vision setting listeners
+
+        this.ntSettingsTable.addEntryListener("TargetPixel", (table, key ,entry, value, flags) ->{
+            targetPixel = value.getDouble();
+            System.out.println("TargetPixel Value updates to:" + targetPixel);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("TargetPixel").getDouble(339.5);
+
+        this.ntSettingsTable.addEntryListener("AngleThreshold", (table,key,entry,value,flags) -> {
+            angleThreshold = value.getDouble();
+            System.out.println(key + " updated to: " + value.getDouble());
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("AngleThreshold").getDouble(1);
 
     }
-
-
 
     private void version1() {
         double goodEnough = 3;
