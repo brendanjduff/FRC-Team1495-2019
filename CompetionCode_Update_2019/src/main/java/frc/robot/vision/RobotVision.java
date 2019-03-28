@@ -154,7 +154,6 @@ public class RobotVision {
         return -1;
     }
 
-
     private VisionTarget target = null;
     private void yawDifferential() {
         int targetIndexSelection = 0;
