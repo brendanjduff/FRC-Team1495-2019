@@ -165,19 +165,25 @@ public class RobotVision {
                     targetIndexSelection = i;
          else //noinspection ConstantConditions
                     if (targetCount == 1 && targetAngleArray[0] < 50)
-            return;
+                targetIndexSelection = -1;
         else
-            return;
+            targetIndexSelection = -1;
 
         target = updateRoboTarget(targetIndexSelection);
 
-        double angleToTarget = Math.toDegrees(Math.atan((target.getX()-targetPixel)/focalLength));
-
-        if(Math.abs(angleToTarget) > angleThreshold)
-        {
-            //TODO Implement roboDrive response if the angle is above the threshold
+        if(target != null) {
+            double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / focalLength));
+            if (Math.abs(angleToTarget) > angleThreshold) {
+                //TODO Implement roboDrive response if the angle is above the threshold
+            }
         }
-
+        else {
+            if (targetCount == 0/*TODO get accelerations for the class*/)
+                roboDrive.arcadeDrive(.5, 0);
+            else {
+                //TODO Release the thingy majig
+            }
+        }
 
 
     }
@@ -198,6 +204,8 @@ public class RobotVision {
 
     private VisionTarget updateRoboTarget(int i) {
         updateVisionTargetData();
+        if(i < 0)
+            return null;
         return new VisionTarget(
                 i,
                 targetXArray[i],
