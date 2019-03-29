@@ -4,11 +4,14 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 
 import static frc.robot.Robot.roboDrive;
 
 
 public class RobotVision {
+
+    //TODO add documentation
 
     private static RobotVision inst = null;
 
@@ -17,9 +20,9 @@ public class RobotVision {
     */
     private NetworkTable ntSettingsTable = null;
 
-    private double targetPixel = 339.5;
-    private double focalLength = 550.2;
-    private double angleThreshold = 1;
+    private double targetPixel;
+    private double focalLength;
+    private double angleThreshold;
 
 
 
@@ -62,15 +65,17 @@ public class RobotVision {
     public void runPeriodicUpdate() {
         updateVisionTargetData();
         //TODO Implement SmartDashboard data HERE
-        SmartDashboard.putBoolean("Vision Ready Status", isReady());
+        SmartDashboard.putBoolean("Vision Target Detection", hasTargets());
     }
 
-    public boolean isReady() {
+    public boolean hasTargets() {
         updateVisionTargetData();
         return targetCount >= 1;
     }
 
     public void runVisionGuidanceUpdate(int mode) {
+        if(!isNTReady())
+            return;
         switch (mode) {
             case 0:
                 version1();
@@ -107,22 +112,37 @@ public class RobotVision {
 
         this.ntSettingsTable = ntSettingsTable;
 
-        this.ntSettingsTable.getEntry("FocalLength").getDouble(339.5);
 
         this.ntSettingsTable.addEntryListener("FocalLength", (table, key, entry, value, flags) ->{
             focalLength = entry.getValue().getDouble();
+            System.out.println("Focal Length Value updated to: " + focalLength);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("FocalLength").getDouble(550.0);
 
-        //TODO Add all the network table vision setting listeners
+
+        this.ntSettingsTable.addEntryListener("TargetPixel", (table, key ,entry, value, flags) ->{
+            targetPixel = value.getDouble();
+            System.out.println("TargetPixel Value updates to:" + targetPixel);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("TargetPixel").getDouble(339.5);
+
+        this.ntSettingsTable.addEntryListener("AngleThreshold", (table,key,entry,value,flags) -> {
+            angleThreshold = value.getDouble();
+            System.out.println(key + " updated to: " + value.getDouble());
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("AngleThreshold").getDouble(1);
 
     }
 
-
+    public boolean isNTReady()
+    {
+        return ntSettingsTable != null && ntVisionTable != null;
+    }
 
     private void version1() {
         double goodEnough = 3;
         double expectedXCentered = 213;
-        if (isReady()) {
+        if (hasTargets()) {
             //GetLeftTarget
             int targetE = getLowerAngle();
 
@@ -157,40 +177,62 @@ public class RobotVision {
     private VisionTarget target = null;
     private void yawDifferential() {
         int targetIndexSelection = 0;
+        try {
 
-        if (targetCount > 1)
-            for (int i = 1; i < targetAngleArray.length; i++)
-                if (targetAngleArray[i] > 50 && targetAreaArray[targetIndexSelection] < targetAreaArray[i])
-                    targetIndexSelection = i;
-         else //noinspection ConstantConditions
-                    if (targetCount == 1 && targetAngleArray[0] < 50)
-                targetIndexSelection = -1;
-        else
-            targetIndexSelection = -1;
+            if (targetCount > 1)
+                for (int i = 1; i < targetAngleArray.length; i++)
+                    if (targetAngleArray[i] < -40 || (targetAreaArray[targetIndexSelection] < targetAreaArray[i] && targetAngleArray[i] < -40))
+                        targetIndexSelection = i;
+                    else //noinspection ConstantConditions
+                        if (targetCount == 1 && targetAngleArray[0] > -40)
+                            targetIndexSelection = -1;
+                        else
+                            targetIndexSelection = -1;
 
-        target = updateRoboTarget(targetIndexSelection);
+            SmartDashboard.putNumber("Index Selection", targetIndexSelection);
+            target = updateRoboTarget(targetIndexSelection);
 
-        if(target != null) {
-            double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / focalLength));
-            if (Math.abs(angleToTarget) > angleThreshold) {
-                //TODO Implement roboDrive response if the angle is above the threshold
+
+            if (target != null) {
+                double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / 554.256));
+                SmartDashboard.putNumber("X current Target", target.getX());
+                SmartDashboard.putNumber("Difference", angleToTarget);
+                SmartDashboard.putBoolean("targetFound", true);
+                if (Math.abs(angleToTarget) > angleThreshold) {
+                    //TODO Implement roboDrive response if the angle is above the threshold
+                } else {
+                    roboDrive.arcadeDrive(.5, 0);
+
+                }
+
+            } else {
+                SmartDashboard.putBoolean("targetFound", false);
+                if (targetCount == 0/*TODO get accelerations for the class*/)
+                    roboDrive.arcadeDrive(.5, 0);
+                else {
+                    //TODO Release the thingy majig
+                    roboDrive.arcadeDrive(.5, 0);
+                }
             }
-        }
-        else {
-            if (targetCount == 0/*TODO get accelerations for the class*/)
-                roboDrive.arcadeDrive(.5, 0);
-            else {
-                //TODO Release the thingy majig
-            }
-        }
+            if (encoderSpeed() == 0)
+                Robot.mExtender.TogglePiston();
 
+            SmartDashboard.putBoolean("FailedCode", false);
+        } catch(Exception e)
+        {
+            System.out.println("Something went wrong with Vision");
+            SmartDashboard.putBoolean("FailedCode", true);
+        }
+    }
 
+    private double encoderSpeed()
+    {
+        return 1.0;
     }
 
 
     private void updateVisionTargetData() {
-        if (this.ntVisionTable == null)
-            return;
+
 
         targetCount = (int) ntVisionCount.getDouble(0);
         targetWidthArray = ntVisionWidth.getDoubleArray(DEF_ARR);

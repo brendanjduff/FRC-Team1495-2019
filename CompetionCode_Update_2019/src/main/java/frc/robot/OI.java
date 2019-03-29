@@ -22,13 +22,13 @@ import frc.robot.commands.ToggleSlowMode;
 public class OI {
 
     public static XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
-    public Joystick operator = new Joystick(RobotMap.ControllerPort.kOperator);
-    public Joystick climber = new Joystick(RobotMap.ControllerPort.kClimber);
+    //public Joystick operator = new Joystick(RobotMap.ControllerPort.kOperator);
+    //public Joystick climber = new Joystick(RobotMap.ControllerPort.kClimber);
 
     public Button slowMode = new JoystickButton(driver, 5);
     public Button defenseMode = new JoystickButton(driver, 7);
     public Button reverseMode = new JoystickButton(driver, 6);
-
+/*
     public Button scoreCargo = new JoystickButton(operator, 1);
     public Button loadCargoFromGround = new JoystickButton(operator, 2);
     public Button elevatorForward = new JoystickButton(operator, 3);
@@ -47,17 +47,17 @@ public class OI {
     public Button bClimberForward = new JoystickButton(climber, 11); 
     public Button climbersForward = new JoystickButton(climber, 7); 
     public Button climbersReverse = new JoystickButton(climber, 8);
-
-  public OI() {                                                                                                                                                                                                                                                                                                                                                       
+*/
+  public OI() {
     slowMode.whenPressed(new ToggleSlowMode());
     defenseMode.whenPressed(new ToggleDefenseMode());
     reverseMode.whenPressed(new ToggleReverseMode());
-
+    /*
     toggleMExtender.whenPressed(new MExtenderPiston());
     toggleMGripper.whenPressed(new MGripperPiston());
     loadCargoFromGround.whileHeld(new LoadCargoFromGround());
-    loadCargoFromGround.whenPressed(new RunLauncher(true));  
-    loadCargoFromGround.whenReleased(new RunIntakeTimed(false, 1));   
+    loadCargoFromGround.whenPressed(new RunLauncher(true));
+    loadCargoFromGround.whenReleased(new RunIntakeTimed(false, 1));
     scoreCargo.whenPressed(new RunLauncherTimed(false, .7));
     elevatorForward.whileHeld(new RunElevator(true));
     elevatorReverse.whileHeld(new RunElevator(false));
@@ -75,5 +75,7 @@ public class OI {
     climbersForward.whileHeld(new RunBackClimber(true));
     climbersReverse.whileHeld(new RunFrontClimber(false));
     climbersReverse.whileHeld(new RunBackClimber(false));
+    */
+
   }
 }
