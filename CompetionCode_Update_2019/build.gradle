@@ -1,6 +1,8 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2019.4.1"
+    id "com.snobot.simulator.plugin.SnobotSimulatorPlugin" version "2019-0.2.0" apply false // Should point to the latest version at https://login.gradle.org/plugin/com.snobot.simulator.plugin.SnobotSimulatorPlugin
+
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
@@ -26,6 +28,12 @@ deploy {
 
 def includeDesktopSupport = false
 
+apply plugin: com.snobot.simulator.plugin.SnobotSimulatorPlugin
+
+configurations {
+        snobotSimCompile
+}
+
 repositories {
     mavenCentral()
 }
@@ -37,6 +45,7 @@ dependencies {
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile 'junit:junit:4.12'
 
+    snobotSimCompile snobotSimJava()
     simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}@zip"
     simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
 }

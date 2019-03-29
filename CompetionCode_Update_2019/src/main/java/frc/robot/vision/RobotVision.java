@@ -193,7 +193,7 @@ public class RobotVision {
 
 
             if (target != null) {
-                double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / focalLength));
+                double angleToTarget = Math.atan((target.getX() - targetPixel) / focalLength)*(180.0/Math.PI);
                 SmartDashboard.putNumber("X current Target", target.getX());
                 SmartDashboard.putNumber("Difference", angleToTarget);
                 SmartDashboard.putBoolean("targetFound", true);
