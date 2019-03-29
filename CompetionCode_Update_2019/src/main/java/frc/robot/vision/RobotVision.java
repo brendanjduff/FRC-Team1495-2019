@@ -49,8 +49,8 @@ public class RobotVision {
     private double[] targetHeightArray;
 
     /* EXAMPLE CODE TO IMPLEMENT INTO ROBOT
-    *
-    * */
+     *
+     * */
 
     public static synchronized RobotVision getInstance() {
         if (inst == null) {
@@ -143,13 +143,13 @@ public class RobotVision {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         this.ntSettingsTable.getEntry("AngleThreshold").setDouble(1);
 
-        this.ntSettingsTable.addEntryListener("xSlowDown", (table,key,entry,value,flags)->{
+        this.ntSettingsTable.addEntryListener("xSlowDown", (table, key, entry, value, flags) -> {
             xSlowDownOnCompensation = value.getDouble();
             System.out.println(key + " updated to: " + value.getDouble());
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         this.ntSettingsTable.getEntry("xSlowDown").setDouble(.1);
 
-        this.ntSettingsTable.addEntryListener("zTurnSpeed", (table,key,entry,value,flags)->{
+        this.ntSettingsTable.addEntryListener("zTurnSpeed", (table, key, entry, value, flags) -> {
             zTurnSpeedOnCompensation = value.getDouble();
             System.out.println(key + " updated to: " + value.getDouble());
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -166,7 +166,6 @@ public class RobotVision {
     }
 
 
-
     /*
      * returns that status of tables Ready-ness
      * */
@@ -179,27 +178,37 @@ public class RobotVision {
      *  Adjustments done directly by vision
      * */
     private void visionYawDifferential() {
-        int targetIndexSelection = 0;
+        int rTargetIndex = 0;
+        int lTargetIndex = -1;
+
         double xSpeed = 0.5;
         double zSpeed = 0.0;
         try {
 
-            if (targetCount > 1)
-                for (int i = 1; i < targetAngleArray.length; i++)
-                    if (targetAngleArray[i] < -40 || (targetAreaArray[targetIndexSelection] < targetAreaArray[i] && targetAngleArray[i] < -40))
-                        targetIndexSelection = i;
-                    else //noinspection ConstantConditions
-                        if (targetCount == 1 && targetAngleArray[0] > -40)
-                            targetIndexSelection = -1;
-                        else
-                            targetIndexSelection = -1;
+            if (targetCount > 1) {
+                for (int i = 1; i < targetAngleArray.length; i++) {
+                    if (targetAngleArray[i] < -40 && (targetAreaArray[rTargetIndex] < targetAreaArray[i] && targetAngleArray[i] < -40))
+                        rTargetIndex = i;
+                    if (targetAngleArray[i] > -40 && (targetAngleArray[lTargetIndex] < targetAreaArray[i]))
+                        lTargetIndex = i;
+                }
+            } else if (targetCount == 1 && targetAngleArray[0] > -40) {
+                rTargetIndex = -1;
+                lTargetIndex = 0;
+            } else {
+                rTargetIndex = -1;
+                lTargetIndex = -1;
+            }
+            VisionTarget targetR = updateVisionTarget(rTargetIndex);
+            VisionTarget targetL = updateVisionTarget(lTargetIndex);
 
-            VisionTarget target = updateVisionTarget(targetIndexSelection);
-
-            if (target != null) {
+            if (targetR != null ||  targetL != null) {
                 //works?
-                double angleToTarget = Math.atan((target.getX() - targetPixel) / focalLength) * (180.0 / Math.PI);
-
+                double angleToTarget;
+                if(targetR != null && targetL != null)
+                    angleToTarget = Math.atan(((targetL.getX()-targetR.getX()) - targetPixel) / focalLength) * (180.0 / Math.PI);
+                else
+                    angleToTarget = Math.atan(targetR==null?targetL.getX():targetR.getX() - targetPixel)*(180/Math.PI);
                 SmartDashboard.putNumber("Difference Angle To Target", angleToTarget);
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", true);
                 //If Above threshold Compensate
@@ -213,6 +222,7 @@ public class RobotVision {
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
             roboDrive.arcadeDrive(xSpeed, zSpeed);
+
             if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 1000))
                 Robot.mExtender.TogglePiston();
 
@@ -307,9 +317,8 @@ public class RobotVision {
 
 
     public void setGuidanceActive(boolean guidanceActive) {
-        if(isGuidanceActive != guidanceActive)
-        {
-            if(isGuidanceActive)
+        if (isGuidanceActive != guidanceActive) {
+            if (isGuidanceActive)
                 timeStartGuidance = System.currentTimeMillis();
         }
         isGuidanceActive = guidanceActive;
