@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 
 import static frc.robot.Robot.roboDrive;
 
@@ -177,44 +178,62 @@ public class RobotVision {
     private VisionTarget target = null;
     private void yawDifferential() {
         int targetIndexSelection = 0;
+        try {
 
-        if (targetCount > 1)
-            for (int i = 1; i < targetAngleArray.length; i++)
-                if (targetAngleArray[i] > 50 && targetAreaArray[targetIndexSelection] < targetAreaArray[i])
-                    targetIndexSelection = i;
-         else //noinspection ConstantConditions
-                    if (targetCount == 1 && targetAngleArray[0] < 50)
-                targetIndexSelection = -1;
-        else
-            targetIndexSelection = -1;
+            if (targetCount > 1)
+                for (int i = 1; i < targetAngleArray.length; i++)
+                    if (targetAngleArray[i] < -40 || (targetAreaArray[targetIndexSelection] < targetAreaArray[i] && targetAngleArray[i] < -40))
+                        targetIndexSelection = i;
+                    else //noinspection ConstantConditions
+                        if (targetCount == 1 && targetAngleArray[0] > -40)
+                            targetIndexSelection = -1;
+                        else
+                            targetIndexSelection = -1;
 
-        target = updateRoboTarget(targetIndexSelection);
+            SmartDashboard.putNumber("Index Selection", targetIndexSelection);
+            target = updateRoboTarget(targetIndexSelection);
 
 
-        if(target != null) {
-            double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / focalLength));
-            SmartDashboard.putNumber("Difference",angleToTarget);
-            SmartDashboard.putBoolean("targetFound", true);
-            if (Math.abs(angleToTarget) > angleThreshold) {
-                //TODO Implement roboDrive response if the angle is above the threshold
+            if (target != null) {
+                double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / 554.256));
+                SmartDashboard.putNumber("X current Target", target.getX());
+                SmartDashboard.putNumber("Difference", angleToTarget);
+                SmartDashboard.putBoolean("targetFound", true);
+                if (Math.abs(angleToTarget) > angleThreshold) {
+                    //TODO Implement roboDrive response if the angle is above the threshold
+                } else {
+                    roboDrive.arcadeDrive(.5, 0);
+
+                }
+
+            } else {
+                SmartDashboard.putBoolean("targetFound", false);
+                if (targetCount == 0/*TODO get accelerations for the class*/)
+                    roboDrive.arcadeDrive(.5, 0);
+                else {
+                    //TODO Release the thingy majig
+                    roboDrive.arcadeDrive(.5, 0);
+                }
             }
-        }
-        else {
-            SmartDashboard.putBoolean("targetFound", false);
-            if (targetCount == 0/*TODO get accelerations for the class*/)
-                roboDrive.arcadeDrive(.5, 0);
-            else {
-                //TODO Release the thingy majig
-            }
-        }
+            if (encoderSpeed() == 0)
+                Robot.mExtender.TogglePiston();
 
+            SmartDashboard.putBoolean("FailedCode", false);
+        } catch(Exception e)
+        {
+            System.out.println("Something went wrong with Vision");
+            SmartDashboard.putBoolean("FailedCode", true);
+        }
+    }
 
+    private double encoderSpeed()
+    {
+        return 1.0;
     }
 
 
     private void updateVisionTargetData() {
-        if (this.ntVisionTable == null)
-            return;
+
 
         targetCount = (int) ntVisionCount.getDouble(0);
         targetWidthArray = ntVisionWidth.getDoubleArray(DEF_ARR);

@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
     vision.runPeriodicUpdate();
     if(OI.driver.getAButton())
     {
-      vision.runVisionGuidanceUpdate(0);
+      vision.runVisionGuidanceUpdate(1);
     }
     else
     driverJoystickUpdate();
