@@ -74,16 +74,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="109" column="65" selection-start-line="109" selection-start-column="65" selection-end-line="109" selection-end-column="65" />
+            <state relative-caret-position="230">
+              <caret line="196" column="33" selection-start-line="196" selection-start-column="33" selection-end-line="196" selection-end-column="33" />
               <folding>
                 <element signature="method#getInstance#0;class#RobotVision#0" />
+                <element signature="e#1693#1694#0" expanded="true" />
+                <element signature="e#1729#1730#0" expanded="true" />
                 <element signature="method#runPeriodicUpdate#0;class#RobotVision#0" />
                 <element signature="method#runVisionGuidanceUpdate#0;class#RobotVision#0" />
                 <element signature="method#setNtVisionTable#0;class#RobotVision#0" />
                 <element signature="method#setNtSettingsTable#0;class#RobotVision#0" />
                 <element signature="method#hasTargets#0;class#RobotVision#0" />
-                <element signature="e#6004#6005#0" expanded="true" />
+                <element signature="e#5670#5742#1" />
+                <element signature="e#6064#6065#0" expanded="true" />
+                <element signature="e#8565#8566#0" expanded="true" />
                 <element signature="method#updateVisionTargetData#0;class#RobotVision#0" />
                 <element signature="method#updateVisionTarget#0;class#RobotVision#0" />
                 <element signature="method#version1#0;class#RobotVision#0" />
@@ -128,8 +132,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/Robot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2139">
-              <caret line="109" column="31" selection-start-line="109" selection-start-column="31" selection-end-line="109" selection-end-column="31" />
+            <state relative-caret-position="437">
+              <caret line="44" column="74" lean-forward="true" selection-start-line="44" selection-start-column="74" selection-end-line="44" selection-end-column="74" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -437,7 +441,7 @@
       <workItem from="1553828564872" duration="1307000" />
       <workItem from="1553830561143" duration="117000" />
       <workItem from="1553830707821" duration="863000" />
-      <workItem from="1553831613787" duration="5217000" />
+      <workItem from="1553831613787" duration="6114000" />
     </task>
     <servers />
   </component>
@@ -447,7 +451,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="83146000" />
+    <option name="totallyTimeSpent" value="84043000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -462,7 +466,7 @@
     <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20151034" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20151034" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -475,7 +479,7 @@
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info active="true" anchor="bottom" id="TODO" order="6" visible="true" weight="0.3293556" />
+      <window_info anchor="bottom" id="TODO" order="6" visible="true" weight="0.3293556" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49960256" weight="0.3277645" />
@@ -599,16 +603,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/Robot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2139">
-          <caret line="109" column="31" selection-start-line="109" selection-start-column="31" selection-end-line="109" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Gyro.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
@@ -636,18 +630,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/Robot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="44" column="74" lean-forward="true" selection-start-line="44" selection-start-column="74" selection-end-line="44" selection-end-column="74" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="109" column="65" selection-start-line="109" selection-start-column="65" selection-end-line="109" selection-end-column="65" />
+        <state relative-caret-position="230">
+          <caret line="196" column="33" selection-start-line="196" selection-start-column="33" selection-end-line="196" selection-end-column="33" />
           <folding>
             <element signature="method#getInstance#0;class#RobotVision#0" />
+            <element signature="e#1693#1694#0" expanded="true" />
+            <element signature="e#1729#1730#0" expanded="true" />
             <element signature="method#runPeriodicUpdate#0;class#RobotVision#0" />
             <element signature="method#runVisionGuidanceUpdate#0;class#RobotVision#0" />
             <element signature="method#setNtVisionTable#0;class#RobotVision#0" />
             <element signature="method#setNtSettingsTable#0;class#RobotVision#0" />
             <element signature="method#hasTargets#0;class#RobotVision#0" />
-            <element signature="e#6004#6005#0" expanded="true" />
+            <element signature="e#5670#5742#1" />
+            <element signature="e#6064#6065#0" expanded="true" />
+            <element signature="e#8565#8566#0" expanded="true" />
             <element signature="method#updateVisionTargetData#0;class#RobotVision#0" />
             <element signature="method#updateVisionTarget#0;class#RobotVision#0" />
             <element signature="method#version1#0;class#RobotVision#0" />

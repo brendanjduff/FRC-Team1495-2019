@@ -46,6 +46,10 @@ public class RobotVision {
     private double[] targetYArray;
     private double[] targetHeightArray;
 
+    /* EXAMPLE CODE TO IMPLEMENT INTO ROBOT
+    *
+    * */
+
     public static synchronized RobotVision getInstance() {
         if (inst == null) {
             inst = new RobotVision();
@@ -188,9 +192,9 @@ public class RobotVision {
 
             VisionTarget target = updateVisionTarget(targetIndexSelection);
 
-
+            boolean seetarget = false;
             if (target != null) {
-
+                seetarget = true;
                 //works?
                 double angleToTarget = Math.atan((target.getX() - targetPixel) / focalLength) * (180.0 / Math.PI);
 
@@ -207,7 +211,7 @@ public class RobotVision {
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
             roboDrive.arcadeDrive(xSpeed, zSpeed);
-            if (encoderSpeed() == 0)
+            if (encoderSpeed() == 0 && !seetarget)
                 Robot.mExtender.setPiston(DoubleSolenoid.Value.kForward);
 
             SmartDashboard.putBoolean("FailedCode", false);
@@ -221,8 +225,7 @@ public class RobotVision {
         Returns the speed of the encoder in units, don't worry about unit conversion when implementing
     * */
     private double encoderSpeed() {
-        return 1.0;
-        //TODO IMPLEMENT ME
+        return Robot.rightDriveMaster.getSelectedSensorPosition(0);
     }
 
 
