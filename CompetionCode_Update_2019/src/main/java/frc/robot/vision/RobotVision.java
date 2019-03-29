@@ -31,7 +31,7 @@ public class RobotVision {
     /*
      * Vision Target Variables
      */
-    private NetworkTable ntVisionTable = null;
+    private NetworkTable ntVisionTable;
     private NetworkTableEntry ntVisionWidth;
     private NetworkTableEntry ntVisionCount;
     private NetworkTableEntry ntVisionAngle;
@@ -117,14 +117,14 @@ public class RobotVision {
             focalLength = entry.getValue().getDouble();
             System.out.println("Focal Length Value updated to: " + focalLength);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("FocalLength").setDouble(550.0);
+        this.ntSettingsTable.getEntry("FocalLength").setDouble(554.256258);
 
 
         this.ntSettingsTable.addEntryListener("TargetPixel", (table, key ,entry, value, flags) ->{
             targetPixel = value.getDouble();
             System.out.println("TargetPixel Value updates to:" + targetPixel);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("TargetPixel").setDouble(339.5);
+        this.ntSettingsTable.getEntry("TargetPixel").setDouble(319.5);
 
         this.ntSettingsTable.addEntryListener("AngleThreshold", (table,key,entry,value,flags) -> {
             angleThreshold = value.getDouble();
@@ -134,7 +134,7 @@ public class RobotVision {
 
     }
 
-    public boolean isNTReady()
+    private boolean isNTReady()
     {
         return ntSettingsTable != null && ntVisionTable != null;
     }
@@ -174,7 +174,6 @@ public class RobotVision {
         return -1;
     }
 
-    private VisionTarget target = null;
     private void yawDifferential() {
         int targetIndexSelection = 0;
         try {
@@ -190,11 +189,11 @@ public class RobotVision {
                             targetIndexSelection = -1;
 
             SmartDashboard.putNumber("Index Selection", targetIndexSelection);
-            target = updateRoboTarget(targetIndexSelection);
+            VisionTarget target = updateRoboTarget(targetIndexSelection);
 
 
             if (target != null) {
-                double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / 554.256));
+                double angleToTarget = Math.toDegrees(Math.atan((target.getX() - targetPixel) / focalLength));
                 SmartDashboard.putNumber("X current Target", target.getX());
                 SmartDashboard.putNumber("Difference", angleToTarget);
                 SmartDashboard.putBoolean("targetFound", true);
@@ -218,8 +217,7 @@ public class RobotVision {
                 Robot.mExtender.TogglePiston();
 
             SmartDashboard.putBoolean("FailedCode", false);
-        } catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Something went wrong with Vision");
             SmartDashboard.putBoolean("FailedCode", true);
         }
@@ -233,6 +231,8 @@ public class RobotVision {
 
     private void updateVisionTargetData() {
 
+        if(ntVisionTable == null)
+            return;
 
         targetCount = (int) ntVisionCount.getDouble(0);
         targetWidthArray = ntVisionWidth.getDoubleArray(DEF_ARR);

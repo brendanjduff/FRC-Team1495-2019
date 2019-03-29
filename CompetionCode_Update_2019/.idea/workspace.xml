@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22e9980c-2e59-49a3-b5f1-3e32051f98c0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -103,8 +101,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="644">
-              <caret line="134" column="5" lean-forward="true" selection-start-line="134" selection-start-column="5" selection-end-line="134" selection-end-column="5" />
+            <state relative-caret-position="529">
+              <caret line="126" column="65" selection-start-line="126" selection-start-column="65" selection-end-line="126" selection-end-column="65" />
+              <folding>
+                <element signature="method#version1#0;class#RobotVision#0" />
+                <element signature="e#7837#7838#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -484,12 +486,12 @@
       <workItem from="1553748269424" duration="7197000" />
       <workItem from="1553784128718" duration="359000" />
       <workItem from="1553784611411" duration="8138000" />
-      <workItem from="1553822801961" duration="1038000" />
+      <workItem from="1553822801961" duration="2845000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72470000" />
+    <option name="totallyTimeSpent" value="74277000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -609,8 +611,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="134" column="5" lean-forward="true" selection-start-line="134" selection-start-column="5" selection-end-line="134" selection-end-column="5" />
+        <state relative-caret-position="529">
+          <caret line="126" column="65" selection-start-line="126" selection-start-column="65" selection-end-line="126" selection-end-column="65" />
+          <folding>
+            <element signature="method#version1#0;class#RobotVision#0" />
+            <element signature="e#7837#7838#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
