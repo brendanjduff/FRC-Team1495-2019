@@ -213,7 +213,7 @@ public class RobotVision {
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
             roboDrive.arcadeDrive(xSpeed, zSpeed);
-            if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 3000))
+            if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 1000))
                 Robot.mExtender.TogglePiston();
 
             SmartDashboard.putBoolean("FailedCode", false);
