@@ -74,8 +74,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="155" column="9" lean-forward="true" selection-start-line="155" selection-start-column="9" selection-end-line="155" selection-end-column="9" />
+            <state relative-caret-position="305">
+              <caret line="109" column="65" selection-start-line="109" selection-start-column="65" selection-end-line="109" selection-end-column="65" />
               <folding>
                 <element signature="method#getInstance#0;class#RobotVision#0" />
                 <element signature="method#runPeriodicUpdate#0;class#RobotVision#0" />
@@ -83,7 +83,7 @@
                 <element signature="method#setNtVisionTable#0;class#RobotVision#0" />
                 <element signature="method#setNtSettingsTable#0;class#RobotVision#0" />
                 <element signature="method#hasTargets#0;class#RobotVision#0" />
-                <element signature="method#yawDifferential#0;class#RobotVision#0" />
+                <element signature="e#6004#6005#0" expanded="true" />
                 <element signature="method#updateVisionTargetData#0;class#RobotVision#0" />
                 <element signature="method#updateVisionTarget#0;class#RobotVision#0" />
                 <element signature="method#version1#0;class#RobotVision#0" />
@@ -437,7 +437,7 @@
       <workItem from="1553828564872" duration="1307000" />
       <workItem from="1553830561143" duration="117000" />
       <workItem from="1553830707821" duration="863000" />
-      <workItem from="1553831613787" duration="4385000" />
+      <workItem from="1553831613787" duration="5217000" />
     </task>
     <servers />
   </component>
@@ -447,7 +447,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82314000" />
+    <option name="totallyTimeSpent" value="83146000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -638,8 +638,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/robot/vision/RobotVision.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="155" column="9" lean-forward="true" selection-start-line="155" selection-start-column="9" selection-end-line="155" selection-end-column="9" />
+        <state relative-caret-position="305">
+          <caret line="109" column="65" selection-start-line="109" selection-start-column="65" selection-end-line="109" selection-end-column="65" />
           <folding>
             <element signature="method#getInstance#0;class#RobotVision#0" />
             <element signature="method#runPeriodicUpdate#0;class#RobotVision#0" />
@@ -647,7 +647,7 @@
             <element signature="method#setNtVisionTable#0;class#RobotVision#0" />
             <element signature="method#setNtSettingsTable#0;class#RobotVision#0" />
             <element signature="method#hasTargets#0;class#RobotVision#0" />
-            <element signature="method#yawDifferential#0;class#RobotVision#0" />
+            <element signature="e#6004#6005#0" expanded="true" />
             <element signature="method#updateVisionTargetData#0;class#RobotVision#0" />
             <element signature="method#updateVisionTarget#0;class#RobotVision#0" />
             <element signature="method#version1#0;class#RobotVision#0" />

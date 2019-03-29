@@ -18,11 +18,13 @@ public class RobotVision {
     private NetworkTable ntSettingsTable = null;
 
     /*
-     *  Vision Settings for yaw differential
+     *  Vision Settings for vision yaw differential
      */
     private double targetPixel;
     private double focalLength;
     private double angleThreshold;
+    private double xSlowDownOnCompensation;
+    private double zTurnSpeedOnCompensation;
 
     /*
      * Vision Target Variables
@@ -114,6 +116,8 @@ public class RobotVision {
         this.ntSettingsTable = ntSettingsTable;
 
 
+        //I'm not sure how to clean this...
+        //TODO Find an abstraction method
         this.ntSettingsTable.addEntryListener("FocalLength", (table, key, entry, value, flags) -> {
             focalLength = entry.getValue().getDouble();
             System.out.println("Focal Length Value updated to: " + focalLength);
@@ -132,6 +136,18 @@ public class RobotVision {
             System.out.println(key + " updated to: " + value.getDouble());
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         this.ntSettingsTable.getEntry("AngleThreshold").setDouble(1);
+
+        this.ntSettingsTable.addEntryListener("xSlowDown", (table,key,entry,value,flags)->{
+            xSlowDownOnCompensation = value.getDouble();
+            System.out.println(key + " updated to: " + value.getDouble());
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("xSlowDown").setDouble(.1);
+
+        this.ntSettingsTable.addEntryListener("zTurnSpeed", (table,key,entry,value,flags)->{
+            zTurnSpeedOnCompensation = value.getDouble();
+            System.out.println(key + " updated to: " + value.getDouble());
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        this.ntSettingsTable.getEntry("zTurnSpeed").setDouble(.3);
 
     }
 
@@ -182,8 +198,8 @@ public class RobotVision {
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", true);
                 //If Above threshold Compensate
                 if (Math.abs(angleToTarget) > angleThreshold) {
-                    xSpeed -=.1;
-                    zSpeed += angleToTarget < 0 ? -.3 : .3;
+                    xSpeed -= xSlowDownOnCompensation;
+                    zSpeed += angleToTarget < 0 ? -1 * zTurnSpeedOnCompensation : zTurnSpeedOnCompensation;
                 } else
                     SmartDashboard.putNumber("Difference Angle To Target", 0);
 
