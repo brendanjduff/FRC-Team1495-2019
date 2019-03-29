@@ -3,7 +3,6 @@ package frc.robot.vision;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
@@ -16,6 +15,9 @@ public class RobotVision {
     private static RobotVision inst = null;
     private NetworkTable ntVisionTable;
     private NetworkTable ntSettingsTable = null;
+
+    private boolean isGuidanceActive = false;
+    private long timeStartGuidance = 0;
 
     /*
      *  Vision Settings for vision yaw differential
@@ -163,8 +165,10 @@ public class RobotVision {
         return targetCount >= 1;
     }
 
+
+
     /*
-     * returns that status of tables readyness
+     * returns that status of tables Ready-ness
      * */
     private boolean isNTReady() {
         return ntSettingsTable != null && ntVisionTable != null;
@@ -192,9 +196,7 @@ public class RobotVision {
 
             VisionTarget target = updateVisionTarget(targetIndexSelection);
 
-            boolean seetarget = false;
             if (target != null) {
-                seetarget = true;
                 //works?
                 double angleToTarget = Math.atan((target.getX() - targetPixel) / focalLength) * (180.0 / Math.PI);
 
@@ -211,8 +213,8 @@ public class RobotVision {
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
             roboDrive.arcadeDrive(xSpeed, zSpeed);
-            if (encoderSpeed() == 0 && !seetarget)
-                Robot.mExtender.setPiston(DoubleSolenoid.Value.kForward);
+            if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 3000))
+                Robot.mExtender.TogglePiston();
 
             SmartDashboard.putBoolean("FailedCode", false);
         } catch (Exception e) {
@@ -304,4 +306,12 @@ public class RobotVision {
     }
 
 
+    public void setGuidanceActive(boolean guidanceActive) {
+        if(isGuidanceActive != guidanceActive)
+        {
+            if(isGuidanceActive)
+                timeStartGuidance = System.currentTimeMillis();
+        }
+        isGuidanceActive = guidanceActive;
+    }
 }

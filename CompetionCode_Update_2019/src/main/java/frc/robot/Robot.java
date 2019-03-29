@@ -110,11 +110,13 @@ public class Robot extends TimedRobot {
     vision.runPeriodicUpdate();
     if(OI.driver.getAButton())
     {
+     vision.setGuidanceActive(true);
       vision.runVisionGuidanceUpdate(1);
     }
-    else
-    driverJoystickUpdate();
-
+    else {
+      vision.setGuidanceActive(false);
+      driverJoystickUpdate();
+    }
     SmartDashboard.putBoolean("Vision Status", vision.hasTargets());
     SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
