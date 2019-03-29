@@ -23,5 +23,5 @@
 hs_err_pid*
 
 #Ignore the workspace settings
-/.idea/workspace.xml
+.idea/workspace.xml
 

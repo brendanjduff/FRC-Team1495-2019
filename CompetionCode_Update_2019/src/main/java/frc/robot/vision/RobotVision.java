@@ -117,20 +117,20 @@ public class RobotVision {
             focalLength = entry.getValue().getDouble();
             System.out.println("Focal Length Value updated to: " + focalLength);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("FocalLength").getDouble(550.0);
+        this.ntSettingsTable.getEntry("FocalLength").setDouble(550.0);
 
 
         this.ntSettingsTable.addEntryListener("TargetPixel", (table, key ,entry, value, flags) ->{
             targetPixel = value.getDouble();
             System.out.println("TargetPixel Value updates to:" + targetPixel);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("TargetPixel").getDouble(339.5);
+        this.ntSettingsTable.getEntry("TargetPixel").setDouble(339.5);
 
         this.ntSettingsTable.addEntryListener("AngleThreshold", (table,key,entry,value,flags) -> {
             angleThreshold = value.getDouble();
             System.out.println(key + " updated to: " + value.getDouble());
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("AngleThreshold").getDouble(1);
+        this.ntSettingsTable.getEntry("AngleThreshold").setDouble(1);
 
     }
 
