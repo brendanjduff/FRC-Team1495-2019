@@ -24,7 +24,7 @@ public class RobotVision {
      */
     private double targetPixel;
     private double focalLength;
-    private double angleThreshold;
+    private double angleThreshold = 1.0;
     private double xSlowDownOnCompensation;
     private double zTurnSpeedOnCompensation;
 
@@ -128,11 +128,11 @@ public class RobotVision {
             focalLength = entry.getValue().getDouble();
             System.out.println("Focal Length Value updated to: " + focalLength);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("FocalLength").setDouble(554.256258);
+        this.ntSettingsTable.getEntry("FocalLength").setDouble(553.25);
 
 
         this.ntSettingsTable.addEntryListener("TargetPixel", (table, key, entry, value, flags) -> {
-            targetPixel = value.getDouble();
+            targetPixel = entry.getValue().getDouble();
             System.out.println("TargetPixel Value updates to:" + targetPixel);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         this.ntSettingsTable.getEntry("TargetPixel").setDouble(319.5);
@@ -179,17 +179,17 @@ public class RobotVision {
      * */
     private void visionYawDifferential() {
         int rTargetIndex = 0;
-        int lTargetIndex = -1;
+        int lTargetIndex = 0;
 
-        double xSpeed = 0.5;
+        double xSpeed = 0.45;
         double zSpeed = 0.0;
         try {
 
-            if (targetCount > 1) {
-                for (int i = 1; i < targetAngleArray.length; i++) {
-                    if (targetAngleArray[i] < -40 && (targetAreaArray[rTargetIndex] < targetAreaArray[i] && targetAngleArray[i] < -40))
+            if (targetCount == 2) {
+                for (int i = 0; i < targetAngleArray.length; i++) {
+                    if (targetAngleArray[i] < -40 /*&& (targetAreaArray[rTargetIndex] < targetAreaArray[i])*/)
                         rTargetIndex = i;
-                    if (targetAngleArray[i] > -40 && (targetAngleArray[lTargetIndex] < targetAreaArray[i]))
+                    if (targetAngleArray[i] > -40 /*&& (targetAreaArray[lTargetIndex] < targetAreaArray[i])*/)
                         lTargetIndex = i;
                 }
             } else if (targetCount == 1 && targetAngleArray[0] > -40) {
@@ -202,29 +202,44 @@ public class RobotVision {
             VisionTarget targetR = updateVisionTarget(rTargetIndex);
             VisionTarget targetL = updateVisionTarget(lTargetIndex);
 
-            if (targetR != null ||  targetL != null) {
+            SmartDashboard.putBoolean("RightTarget", targetR != null);
+            SmartDashboard.putBoolean("LeftTarget", targetL != null);
+
+            if (targetR != null || targetL != null) {
                 //works?
-                double angleToTarget;
-                if(targetR != null && targetL != null)
-                    angleToTarget = Math.atan(((targetL.getX()-targetR.getX()) - targetPixel) / focalLength) * (180.0 / Math.PI);
-                else
-                    angleToTarget = Math.atan(targetR==null?targetL.getX():targetR.getX() - targetPixel)*(180/Math.PI);
-                SmartDashboard.putNumber("Difference Angle To Target", angleToTarget);
+                double angleRelative;
+                if (targetR != null && targetL != null) {
+                    double diff = (targetR.getX() + targetL.getX()) /2.0;
+                    SmartDashboard.putNumber("X Actual?", diff);
+                    angleRelative = Math.toDegrees(Math.atan((diff - 369.5) / 554.3));
+                } else {
+                    angleRelative = Math.toDegrees(Math.atan((targetR == null ? targetL.getX() : targetR.getX() - targetPixel)) / focalLength);
+                }
+                SmartDashboard.putNumber("Difference Angle To Target", angleRelative);
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", true);
                 //If Above threshold Compensate
-                if (Math.abs(angleToTarget) > angleThreshold) {
-                    xSpeed -= xSlowDownOnCompensation;
-                    zSpeed += angleToTarget < 0 ? -1 * zTurnSpeedOnCompensation : zTurnSpeedOnCompensation;
-                } else
+                if ( !(angleRelative > 28 &&  angleRelative < 32)) {
+                    SmartDashboard.putBoolean("Compensating", true);
+                    xSpeed = .5;
+                    if(angleRelative > 30)
+                        zSpeed = .4;
+                    else
+                        zSpeed = -.4;
+                } else {
                     SmartDashboard.putNumber("Difference Angle To Target", 0);
-
+                    SmartDashboard.putBoolean("Compensating", false);
+                }
             } else
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
-            roboDrive.arcadeDrive(xSpeed, zSpeed);
 
-            if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 1000))
-                Robot.mExtender.TogglePiston();
+                SmartDashboard.putNumber("XSpeed", xSpeed);
+                SmartDashboard.putNumber("ZSpeed", zSpeed);
+
+                roboDrive.arcadeDrive(xSpeed , zSpeed);
+
+            // if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 10000))
+            //   Robot.mExtender.TogglePiston();
 
             SmartDashboard.putBoolean("FailedCode", false);
         } catch (Exception e) {
