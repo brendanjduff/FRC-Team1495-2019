@@ -6,6 +6,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
+import java.util.ArrayList;
+
 import static frc.robot.Robot.roboDrive;
 
 
@@ -70,7 +72,7 @@ public class RobotVision {
      * */
     public void runPeriodicUpdate() {
         updateVisionTargetData();
-        SmartDashboard.putBoolean("Does Vision Sees Targets", hasTargets());
+        SmartDashboard.putBoolean("Vision Status", hasTargets());
     }
 
 
@@ -162,7 +164,7 @@ public class RobotVision {
     */
     public boolean hasTargets() {
         updateVisionTargetData();
-        return targetCount >= 1;
+        return targetCount >= 1 && targetCount < 4;
     }
 
 
@@ -178,29 +180,90 @@ public class RobotVision {
      *  Adjustments done directly by vision
      * */
     private void visionYawDifferential() {
-        int rTargetIndex = 0;
-        int lTargetIndex = 0;
+        int rTargetIndex = -1;
+        int lTargetIndex = -1;
 
         double xSpeed = 0.45;
         double zSpeed = 0.0;
         try {
+            //Version 1 of target selection
+//
+//            if (targetCount == 2) {
+//                for (int i = 0; i < targetAngleArray.length; i++) {
+//                    if (targetAngleArray[i] < -40 /*&& (targetAreaArray[rTargetIndex] < targetAreaArray[i])*/)
+//                        rTargetIndex = i;
+//                    if (targetAngleArray[i] > -40 /*&& (targetAreaArray[lTargetIndex] < targetAreaArray[i])*/)
+//                        lTargetIndex = i;
+//                }
+//            } else if (targetCount == 1 && targetAngleArray[0] > -40) {
+//                rTargetIndex = -1;
+//                lTargetIndex = 0;
+//            } else {
+//                rTargetIndex = -1;
+//                lTargetIndex = -1;
+//            }
+//
 
-            if (targetCount == 2) {
-                for (int i = 0; i < targetAngleArray.length; i++) {
-                    if (targetAngleArray[i] < -40 /*&& (targetAreaArray[rTargetIndex] < targetAreaArray[i])*/)
-                        rTargetIndex = i;
-                    if (targetAngleArray[i] > -40 /*&& (targetAreaArray[lTargetIndex] < targetAreaArray[i])*/)
-                        lTargetIndex = i;
+            //Version 2 of target selection
+
+            VisionTarget closest = null;
+            VisionTarget targetR;
+            VisionTarget targetL;
+
+            if (targetCount == 1) {
+                if (targetAngleArray[0] < -40)
+                    rTargetIndex = 0;
+                else
+                    lTargetIndex = 0;
+
+            } else if (targetCount == 2) {
+                if (targetAngleArray[0] < -40) {
+                    rTargetIndex = 0;
+                    lTargetIndex = 1;
+                } else {
+                    rTargetIndex = 1;
+                    lTargetIndex = 0;
                 }
-            } else if (targetCount == 1 && targetAngleArray[0] > -40) {
-                rTargetIndex = -1;
-                lTargetIndex = 0;
-            } else {
-                rTargetIndex = -1;
-                lTargetIndex = -1;
+            } else if (targetCount > 2) {
+                ArrayList<VisionTarget> targetRList = new ArrayList<>();
+                ArrayList<VisionTarget> targetLList = new ArrayList<>();
+                for (int i = 0; i < targetCount; i++) {
+                    if (targetAngleArray[i] < -40)
+                        targetRList.add(updateVisionTarget(i));
+                    else
+                        targetLList.add(updateVisionTarget(i));
+                }
+                if (targetRList.size() < targetLList.size()) {
+                    VisionTarget r = targetRList.get(0);
+                    rTargetIndex = r.getElemInArray();
+
+                    for (VisionTarget T : targetLList) {
+                        if (T.getX() < r.getX()) {
+                            if (closest != null && closest.getX() < T.getX())
+                                closest = T;
+                            else if (closest == null)
+                                closest = T;
+                        }
+                    }
+
+                    lTargetIndex = closest.getElemInArray();
+                } else {
+                    VisionTarget l = targetLList.get(0);
+                    lTargetIndex = l.getElemInArray();
+
+                    for (VisionTarget T : targetLList) {
+                        if (T.getX() > l.getX())
+                            if (closest != null && closest.getX() > T.getX())
+                                closest = T;
+                            else if (closest == null)
+                                closest = T;
+                    }
+                    rTargetIndex = closest.getElemInArray();
+                }
             }
-            VisionTarget targetR = updateVisionTarget(rTargetIndex);
-            VisionTarget targetL = updateVisionTarget(lTargetIndex);
+
+            targetR = updateVisionTarget(rTargetIndex);
+            targetL = updateVisionTarget(lTargetIndex);
 
             SmartDashboard.putBoolean("RightTarget", targetR != null);
             SmartDashboard.putBoolean("LeftTarget", targetL != null);
@@ -209,19 +272,19 @@ public class RobotVision {
                 //works?
                 double angleRelative;
                 if (targetR != null && targetL != null) {
-                    double diff = (targetR.getX() + targetL.getX()) /2.0;
+                    double diff = (targetR.getX() + targetL.getX()) / 2.0;
                     SmartDashboard.putNumber("X Actual?", diff);
-                    angleRelative = Math.toDegrees(Math.atan((diff - 369.5) / 554.3));
+                    angleRelative = Math.toDegrees(Math.atan((diff - 339.5) / 554.3));
                 } else {
                     angleRelative = Math.toDegrees(Math.atan((targetR == null ? targetL.getX() : targetR.getX() - targetPixel)) / focalLength);
                 }
                 SmartDashboard.putNumber("Difference Angle To Target", angleRelative);
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", true);
                 //If Above threshold Compensate
-                if ( !(angleRelative > 28 &&  angleRelative < 32)) {
+                if (!(angleRelative > 28 && angleRelative < 32)) {
                     SmartDashboard.putBoolean("Compensating", true);
                     xSpeed = .5;
-                    if(angleRelative > 30)
+                    if (angleRelative > 30)
                         zSpeed = .4;
                     else
                         zSpeed = -.4;
@@ -233,10 +296,10 @@ public class RobotVision {
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
 
-                SmartDashboard.putNumber("XSpeed", xSpeed);
-                SmartDashboard.putNumber("ZSpeed", zSpeed);
+            SmartDashboard.putNumber("XSpeed", xSpeed);
+            SmartDashboard.putNumber("ZSpeed", zSpeed);
 
-                roboDrive.arcadeDrive(xSpeed , zSpeed);
+            roboDrive.arcadeDrive(xSpeed, zSpeed);
 
             // if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 10000))
             //   Robot.mExtender.TogglePiston();
