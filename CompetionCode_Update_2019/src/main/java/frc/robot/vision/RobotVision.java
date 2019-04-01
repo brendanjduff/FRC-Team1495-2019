@@ -24,10 +24,16 @@ public class RobotVision {
     /*
      *  Vision Settings for vision yaw differential
      */
-    private double targetPixel;
-    private double focalLength;
-    private double angleThreshold = 1.0;
-    private double xSlowDownOnCompensation;
+    private final double DEF_PIX = 339.5;
+    private final double DEF_F = 553.25;
+    private final double DEF_ANGLE = 30;
+    private final double DEF_ANGLET = 1.0;
+    private double expectedAngle = 30;
+    private double expectedPixel = DEF_PIX;
+    private double focalLength = DEF_F;
+    private double angleThreshold = DEF_ANGLET;
+
+    private double xSlowDownOnCompensation = .2;
     private double zTurnSpeedOnCompensation;
 
     /*
@@ -127,23 +133,25 @@ public class RobotVision {
         //I'm not sure how to clean this...
         //TODO Find an abstraction method
         this.ntSettingsTable.addEntryListener("FocalLength", (table, key, entry, value, flags) -> {
-            focalLength = entry.getValue().getDouble();
+            focalLength = entry.getDouble(-1);
             System.out.println("Focal Length Value updated to: " + focalLength);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         this.ntSettingsTable.getEntry("FocalLength").setDouble(553.25);
 
 
+        this.ntSettingsTable.getEntry("TargetPixel").setDouble(expectedPixel);
         this.ntSettingsTable.addEntryListener("TargetPixel", (table, key, entry, value, flags) -> {
-            targetPixel = entry.getValue().getDouble();
-            System.out.println("TargetPixel Value updates to:" + targetPixel);
+            expectedPixel = entry.getDouble(DEF_PIX);
+            System.out.println("TargetPixel Value updates to:" + expectedPixel);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("TargetPixel").setDouble(319.5);
 
+
+        this.ntSettingsTable.getEntry("AngleThreshold").setDouble(1);
         this.ntSettingsTable.addEntryListener("AngleThreshold", (table, key, entry, value, flags) -> {
             angleThreshold = value.getDouble();
             System.out.println(key + " updated to: " + value.getDouble());
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        this.ntSettingsTable.getEntry("AngleThreshold").setDouble(1);
+
 
         this.ntSettingsTable.addEntryListener("xSlowDown", (table, key, entry, value, flags) -> {
             xSlowDownOnCompensation = value.getDouble();
@@ -204,8 +212,8 @@ public class RobotVision {
 //            }
 //
 
-            //Version 2 of target selection
 
+            //Version 2 of target selection
             VisionTarget closest = null;
             VisionTarget targetR;
             VisionTarget targetL;
@@ -273,15 +281,15 @@ public class RobotVision {
                 double angleRelative;
                 if (targetR != null && targetL != null) {
                     double diff = (targetR.getX() + targetL.getX()) / 2.0;
-                    SmartDashboard.putNumber("X Actual?", diff);
+                    SmartDashboard.putNumber("X Actual", diff);
                     angleRelative = Math.toDegrees(Math.atan((diff - 339.5) / 554.3));
                 } else {
-                    angleRelative = Math.toDegrees(Math.atan((targetR == null ? targetL.getX() : targetR.getX() - targetPixel)) / focalLength);
+                    angleRelative = Math.toDegrees(Math.atan((targetR == null ? (targetL.getX() + 20): (targetR.getX() - 20) - expectedPixel)) / focalLength);
                 }
-                SmartDashboard.putNumber("Difference Angle To Target", angleRelative);
+                SmartDashboard.putNumber("DeltaAngle", angleRelative);
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", true);
                 //If Above threshold Compensate
-                if (!(angleRelative > 28 && angleRelative < 32)) {
+                if (!(angleRelative > (expectedAngle-angleThreshold) && angleRelative < (expectedAngle+angleThreshold))) {
                     SmartDashboard.putBoolean("Compensating", true);
                     xSpeed = .5;
                     if (angleRelative > 30)
@@ -289,20 +297,20 @@ public class RobotVision {
                     else
                         zSpeed = -.4;
                 } else {
-                    SmartDashboard.putNumber("Difference Angle To Target", 0);
+                    SmartDashboard.putNumber("DeltaAngle", 0);
                     SmartDashboard.putBoolean("Compensating", false);
                 }
             } else
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
 
 
-            SmartDashboard.putNumber("XSpeed", xSpeed);
-            SmartDashboard.putNumber("ZSpeed", zSpeed);
+            SmartDashboard.putNumber("XSpeed Vision", xSpeed);
+            SmartDashboard.putNumber("ZSpeed Vision", zSpeed);
 
             roboDrive.arcadeDrive(xSpeed, zSpeed);
 
-            // if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 10000))
-            //   Robot.mExtender.TogglePiston();
+             if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 10000))
+              Robot.mExtender.TogglePiston();
 
             SmartDashboard.putBoolean("FailedCode", false);
         } catch (Exception e) {
@@ -396,7 +404,7 @@ public class RobotVision {
 
     public void setGuidanceActive(boolean guidanceActive) {
         if (isGuidanceActive != guidanceActive) {
-            if (isGuidanceActive)
+            if (guidanceActive)
                 timeStartGuidance = System.currentTimeMillis();
         }
         isGuidanceActive = guidanceActive;
