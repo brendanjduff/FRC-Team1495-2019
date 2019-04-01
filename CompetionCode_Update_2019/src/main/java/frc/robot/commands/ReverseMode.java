@@ -3,14 +3,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class HoldTurboMode extends Command {
-  public HoldTurboMode() {
+public class ReverseMode extends Command {
+  boolean toggle;
 
+  public ReverseMode(boolean t) {
+    toggle = t;
   }
 
   @Override
   protected void initialize() {
-    Robot.driveBase.setTurboMode(true);
+    if (toggle)
+      Robot.reverseMode = !Robot.reverseMode;
+    else
+      Robot.reverseMode = true;
   }
 
   @Override
@@ -24,11 +29,13 @@ public class HoldTurboMode extends Command {
 
   @Override
   protected void end() {
-    Robot.driveBase.setTurboMode(false);
+    if (!toggle)
+      Robot.reverseMode = false;
   }
 
   @Override
   protected void interrupted() {
-    Robot.driveBase.setTurboMode(false);
+    if (!toggle)
+      Robot.reverseMode = false;
   }
 }

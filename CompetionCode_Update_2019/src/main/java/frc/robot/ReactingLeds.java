@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Notifier;
 
-public class ReactiveLEDs {
+public class ReactingLeds {
 
 	I2C i2;
 
@@ -48,7 +48,7 @@ public class ReactiveLEDs {
 
 	Notifier notify = new Notifier(new CommandCenter());
 
-	public ReactiveLEDs() {
+	public ReactingLeds() {
 		i2 = new I2C(Port.kOnboard, 4);
 		// s2 = new SerialPort(0, Port.);
 		notify.startPeriodic(0.05);

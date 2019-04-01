@@ -2,18 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class HatchPanelAuto extends Command {
-  public HatchPanelAuto() {
-    requires(Robot.manipulator);
-    requires(Robot.mExtender);
+public class SlowMode extends Command {
+  boolean toggle;
+
+  public SlowMode(boolean t) {
+    toggle = t;
   }
 
   @Override
   protected void initialize() {
-  Robot.manipulator.setPiston(Value.kForward);
-  Robot.mExtender.setPiston(Value.kForward); //working?
+    if (toggle)
+      Robot.slowMode = !Robot.slowMode;
+    else
+      Robot.slowMode = true;
   }
 
   @Override
@@ -22,14 +24,18 @@ public class HatchPanelAuto extends Command {
 
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   @Override
   protected void end() {
+    if (!toggle)
+      Robot.slowMode = false;
   }
 
   @Override
   protected void interrupted() {
+    if (!toggle)
+      Robot.slowMode = false;
   }
 }

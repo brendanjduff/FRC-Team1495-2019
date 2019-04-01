@@ -14,12 +14,11 @@ public class RunElevator extends Command {
 
   @Override
   protected void initialize() {
-    Robot.elevator.manualControl(direction);
+    Robot.elevator.runMotor(direction);
   }
 
   @Override
   protected void execute() {
-    Robot.elevator.checkLimits(direction);
   }
 
   @Override
