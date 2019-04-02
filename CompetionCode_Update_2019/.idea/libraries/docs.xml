@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="docs">
+    <CLASSES />
+    <JAVADOC>
+      <root url="file://$USER_HOME$/navx-mxp/java/docs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/AutoBalance/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/CollisionDetection/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/DataMonitor/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/ExpansionIO/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/FieldCentricDrive/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/MotionDetection/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/examples/RotateToAngle/src" />
+      <root url="file://$USER_HOME$/navx-mxp/java/src" />
+    </SOURCES>
+  </library>
+</component>

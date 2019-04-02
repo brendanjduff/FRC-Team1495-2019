@@ -3,7 +3,9 @@ package frc.robot.vision;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.OI;
 import frc.robot.Robot;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class RobotVision {
     /*
      *  Vision Settings for vision yaw differential
      */
-    private final double DEF_PIX = 339.5;
+    private final double DEF_PIX = 319.5;
     private final double DEF_F = 553.25;
     private final double DEF_ANGLE = 30;
     private final double DEF_ANGLET = 1.0;
@@ -56,9 +58,6 @@ public class RobotVision {
     private double[] targetYArray;
     private double[] targetHeightArray;
 
-    /* EXAMPLE CODE TO IMPLEMENT INTO ROBOT
-     *
-     * */
 
     public static synchronized RobotVision getInstance() {
         if (inst == null) {
@@ -172,7 +171,7 @@ public class RobotVision {
     */
     public boolean hasTargets() {
         updateVisionTargetData();
-        return targetCount >= 1 && targetCount < 4;
+        return targetCount > 1 && targetCount < 4;
     }
 
 
@@ -187,11 +186,13 @@ public class RobotVision {
      *  VisionYaw Mode, takes into account the change in angle needed to be aligned based on the X center
      *  Adjustments done directly by vision
      * */
+    private boolean isReadyForChange = true;
+    private boolean inProgress = false;
     private void visionYawDifferential() {
         int rTargetIndex = -1;
         int lTargetIndex = -1;
 
-        double xSpeed = 0.45;
+        double xSpeed = 0.6;
         double zSpeed = 0.0;
         try {
             //Version 1 of target selection
@@ -219,13 +220,13 @@ public class RobotVision {
             VisionTarget targetL;
 
             if (targetCount == 1) {
-                if (targetAngleArray[0] < -40)
+                if (targetAngleArray[0] > -40)
                     rTargetIndex = 0;
                 else
                     lTargetIndex = 0;
 
             } else if (targetCount == 2) {
-                if (targetAngleArray[0] < -40) {
+                if (targetAngleArray[0] > -40) {
                     rTargetIndex = 0;
                     lTargetIndex = 1;
                 } else {
@@ -236,7 +237,7 @@ public class RobotVision {
                 ArrayList<VisionTarget> targetRList = new ArrayList<>();
                 ArrayList<VisionTarget> targetLList = new ArrayList<>();
                 for (int i = 0; i < targetCount; i++) {
-                    if (targetAngleArray[i] < -40)
+                    if (targetAngleArray[i] > -40)
                         targetRList.add(updateVisionTarget(i));
                     else
                         targetLList.add(updateVisionTarget(i));
@@ -278,36 +279,69 @@ public class RobotVision {
 
             if (targetR != null || targetL != null) {
                 //works?
-                double angleRelative;
+                double deltaAngle;
                 if (targetR != null && targetL != null) {
                     double diff = (targetR.getX() + targetL.getX()) / 2.0;
                     SmartDashboard.putNumber("X Actual", diff);
-                    angleRelative = Math.toDegrees(Math.atan((diff - 339.5) / 554.3));
+                    deltaAngle = Math.toDegrees(Math.atan((diff - 319.5) / 554.25));
                 } else {
-                    angleRelative = Math.toDegrees(Math.atan((targetR == null ? (targetL.getX() + 20): (targetR.getX() - 20) - expectedPixel)) / focalLength);
+                    deltaAngle = /*Math.toDegrees(Math.atan((targetR == null ? (targetL.getX()): (targetR.getX() - 20) - expectedPixel)) / focalLength)*/ 0;
                 }
-                SmartDashboard.putNumber("DeltaAngle", angleRelative);
+
+
+                double angleCurrent = 0;//TODO Implement me
+                double angleDesired = angleCurrent + deltaAngle;
+                isReadyForChange = isReadyForTurn();
+
+                if((Math.abs(deltaAngle) > angleThreshold && isReadyForChange) || inProgress)
+                {
+                    if(!inProgress)
+                    {
+                        inProgress = true;
+                    }
+                    if(deltaAngle > 0)
+                    {
+                        zSpeed = .55;
+                    }else{
+                        zSpeed = -.55;
+                    }
+                    if(Math.abs(angleCurrent - angleDesired) < .2){
+                        zSpeed = 0;
+                        inProgress = false;
+                        isReadyForChange = false;
+                        startDelayNewTurn();
+                    }
+                }
+
+
+
+                SmartDashboard.putNumber("DeltaAngle", deltaAngle);
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", true);
-                //If Above threshold Compensate
-                if (!(angleRelative > (expectedAngle-angleThreshold) && angleRelative < (expectedAngle+angleThreshold))) {
+                //Version 1 Compensation
+                /*
+                if (!(deltaAngle > -1 && deltaAngle < 1)) {
                     SmartDashboard.putBoolean("Compensating", true);
-                    xSpeed = .5;
-                    if (angleRelative > 30)
-                        zSpeed = .4;
+                    xSpeed = .6;
+                    if (deltaAngle > 0)
+                        zSpeed = .6;
                     else
-                        zSpeed = -.4;
+                        zSpeed = -.6;
                 } else {
                     SmartDashboard.putNumber("DeltaAngle", 0);
                     SmartDashboard.putBoolean("Compensating", false);
+                    zSpeed = 0;
                 }
+                 */
+
             } else
                 SmartDashboard.putBoolean("YawDifferentialTargetFound", false);
+
 
 
             SmartDashboard.putNumber("XSpeed Vision", xSpeed);
             SmartDashboard.putNumber("ZSpeed Vision", zSpeed);
 
-            roboDrive.arcadeDrive(xSpeed, zSpeed);
+            roboDrive.arcadeDrive(inProgress ?  0 : OI.driver.getTriggerAxis(GenericHID.Hand.kRight), zSpeed);
 
              if (encoderSpeed() == 0 && (System.currentTimeMillis() - timeStartGuidance > 10000))
               Robot.mExtender.TogglePiston();
@@ -317,6 +351,20 @@ public class RobotVision {
             System.out.println("Something went wrong with Vision");
             SmartDashboard.putBoolean("FailedCode", true);
         }
+    }
+
+    private long startTurnVision;
+    private boolean isReadyForTurn()
+    {
+        if(!inProgress)
+            return System.currentTimeMillis() - startTurnVision > 500;
+        else
+            return true;
+    }
+
+    private void startDelayNewTurn()
+    {
+        startTurnVision = System.currentTimeMillis();
     }
 
     /*
@@ -400,7 +448,6 @@ public class RobotVision {
 
         return -1;
     }
-
 
     public void setGuidanceActive(boolean guidanceActive) {
         if (isGuidanceActive != guidanceActive) {
