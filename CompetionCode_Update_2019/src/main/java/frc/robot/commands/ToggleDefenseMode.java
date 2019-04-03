@@ -4,21 +4,17 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class DefenseMode extends Command {
-  boolean toggle;
+public class ToggleDefenseMode extends Command {
 
-  public DefenseMode(boolean t) {
+  public ToggleDefenseMode() {
     requires(Robot.iExtender);
     requires(Robot.mExtender);
-    toggle = t;
   }
 
   @Override
   protected void initialize() {
-    if (toggle)
-      Robot.defenseMode = !Robot.defenseMode;
-    else
-      Robot.defenseMode = true;
+    
+    Robot.defenseMode = !Robot.defenseMode;
 
     if (Robot.defenseMode) {
       // move elevator to bottom position
@@ -33,29 +29,16 @@ public class DefenseMode extends Command {
   }
 
   @Override
-  protected void execute() {
-  }
+  protected void execute() {}
 
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   @Override
-  protected void end() {
-    if (!toggle) {
-      Robot.defenseMode = false;
-      Robot.mExtender.Unlock();
-      Robot.iExtender.Unlock();
-    }
-  }
+  protected void end() {}
 
   @Override
-  protected void interrupted() {
-    if (!toggle) {
-      Robot.defenseMode = false;
-      Robot.mExtender.Unlock();
-      Robot.iExtender.Unlock();
-    }
-  }
+  protected void interrupted() {}
 }

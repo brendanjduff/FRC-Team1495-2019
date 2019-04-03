@@ -1,50 +1,51 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 
 public class MoveElevatorToPosition extends Command {
 
   int target;
+  boolean initialDir;
 
   public MoveElevatorToPosition(int t) {
     requires(Robot.elevator);
     target = t;
   }
 
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.elevator.setPosition(target);
+    Robot.elevator.setTargetPosition(target);
+    if(Robot.elevator.getPosition() > Robot.elevator.getTargetPosition() + RobotMap.ElevatorControl.kPositionTolerance) {
+      initialDir = false;
+      Robot.elevator.manualControl(initialDir, RobotMap.Motors.kManualElevatorSpeed);
+    }
+    else if(Robot.elevator.getPosition() < Robot.elevator.getTargetPosition() - RobotMap.ElevatorControl.kPositionTolerance) {
+      initialDir = true;
+      Robot.elevator.manualControl(initialDir, RobotMap.Motors.kManualElevatorSpeed);
+    }
+    else {
+      Robot.elevator.stopMotor();
+    }
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // protect movement using limit switches
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return Robot.elevator.isAtPosition();
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.elevator.stopMotor();
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Robot.elevator.stopMotor();
   }
 }

@@ -9,39 +9,35 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 
 public class ZeroElevator extends Command {
   public ZeroElevator() {
     requires(Robot.elevator);
   }
 
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.elevator.setPositionZero(); //runMotor downwards
+    Robot.elevator.manualControl(true, RobotMap.Motors.kZeroingElevatorSpeed);
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true; //when hit lowerbound limit switch
+    return Robot.elevator.getLowerbound();
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
-    //setpositionzero
+    Robot.elevator.setPositionZero();
+    Robot.elevator.stopMotor();
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    //setpositionzero
+    Robot.elevator.stopMotor();  
   }
 }

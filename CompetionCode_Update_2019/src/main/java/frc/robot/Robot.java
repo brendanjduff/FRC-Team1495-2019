@@ -1,30 +1,25 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.HatchPanelAuto;
+import frc.robot.subsystems.BackClimber;
+import frc.robot.subsystems.ClimberWheels;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.ManipulatorExtender;
+import frc.robot.subsystems.FrontClimber;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeExtender;
-import frc.robot.subsystems.BackClimber;
+import frc.robot.subsystems.Launcher;
 import frc.robot.subsystems.Manipulator;
-import frc.robot.subsystems.FrontClimber;
+import frc.robot.subsystems.ManipulatorExtender;
+import frc.robot.vision.RobotVision;
 
 public class Robot extends TimedRobot {
-  public static WPI_TalonSRX leftDriveMaster, leftDriveFollower, rightDriveMaster, rightDriveFollower;
-  public static DifferentialDrive roboDrive;
-  public static boolean slowMode = false;
-  public static boolean defenseMode = true;
-  public static boolean reverseMode = false;
+  public static DriveBase driveBase;
 
   public static Elevator elevator;
   public static Manipulator manipulator;
@@ -34,21 +29,20 @@ public class Robot extends TimedRobot {
   public static Launcher launcher;
   public static FrontClimber fClimber;
   public static BackClimber bClimber;
+  public static ClimberWheels cWheels;
 
   public static OI oi;
   public static PowerDistributionPanel pdp;
   public static Compressor compressor;
-  public static CameraServer cam;
-  public static ReactingLeds leds= new ReactingLeds();
+  public static NavX nav;
+  public static RobotVision vision;
+  public static NetworkTableInstance ntInst;
+
+  public static boolean defenseMode = false;
 
   @Override
   public void robotInit() {
-    leftDriveMaster = new WPI_TalonSRX(RobotMap.CAN.kLeftDriveMaster);
-    leftDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kLeftDriveFollower);
-    rightDriveMaster = new WPI_TalonSRX(RobotMap.CAN.kRightDriveMaster);
-    rightDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kRightDriveFollower);
-    roboDrive = new DifferentialDrive(new SpeedControllerGroup(leftDriveMaster, leftDriveFollower),
-        new SpeedControllerGroup(rightDriveMaster, rightDriveFollower));
+    driveBase = new DriveBase();
 
     elevator = new Elevator();
     manipulator = new Manipulator();
@@ -58,13 +52,19 @@ public class Robot extends TimedRobot {
     launcher = new Launcher();
     fClimber = new FrontClimber();
     bClimber = new BackClimber();
+    cWheels = new ClimberWheels();
+    nav = new NavX();
+    vision = RobotVision.getInstance();
+    ntInst = NetworkTableInstance.getDefault();
 
+    vision.setNtSettingsTable(ntInst.getTable("PiSettings"));
+    vision.setNtVisionTable(ntInst.getTable("PiVision"));
+
+    
     oi = new OI();
     pdp = new PowerDistributionPanel(RobotMap.CAN.kPDP);
     pdp.clearStickyFaults();
     compressor = new Compressor(RobotMap.CAN.kPCM);
-    cam = CameraServer.getInstance();
-    cam.startAutomaticCapture("cam1", 0);
   }
 
   @Override
@@ -82,44 +82,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    // grip game pieces that are within robot. Set all solenoids to correct value.
-    // Disable defense mode.
+    Scheduler.getInstance().add(new HatchPanelAuto());
   }
 
   @Override
   public void autonomousPeriodic() {
-    /*
-    //Xbox Controller
-        if (!slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(!slowMode && reverseMode)
-      roboDrive.arcadeDrive(oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    else if(slowMode && reverseMode)
-      roboDrive.arcadeDrive(oi.driver.getY(Hand.kRight) * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    */
-
-    // XboxController Alternate
-    double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
-    if (!slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(!slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    else if(slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-
-    SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
+    vision.runPeriodicUpdate();
+    driveStateUpdate();
+    SmartDashboard.putNumber("Elevator Position: ", Robot.elevator.getPosition());
     Scheduler.getInstance().run();
   }
 
@@ -129,27 +99,28 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    // XboxController Alternate
-    double triggerSum = oi.driver.getTriggerAxis(Hand.kRight) - oi.driver.getTriggerAxis(Hand.kLeft);
-    if (!slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(!slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
-    else if(slowMode && !reverseMode)
-      roboDrive.arcadeDrive(-triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-    else if(slowMode && reverseMode)
-      roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-          oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
-
-    SmartDashboard.putNumber("Elevator Position", Robot.elevator.getPosition());
+    vision.runPeriodicUpdate();
+    driveStateUpdate();
+    SmartDashboard.putNumber("Elevator Position: ", Robot.elevator.getPosition());
+    SmartDashboard.putNumber("Pitch", nav.getPitchDeg());
+    SmartDashboard.putNumber("Roll", nav.getRoll());
+    SmartDashboard.putNumber("Yaw", nav.getYawDeg());
     Scheduler.getInstance().run();
   }
 
   @Override
   public void testPeriodic() {
+  }
+
+  private void driveStateUpdate()
+  {
+      if(OI.driver.getAButton()){
+      vision.runVisionGuidanceUpdate(1);
+      vision.setGuidanceActive(true);
+      }
+      else{
+      driveBase.drive(oi);
+      vision.setGuidanceActive(false);
+      }
   }
 }

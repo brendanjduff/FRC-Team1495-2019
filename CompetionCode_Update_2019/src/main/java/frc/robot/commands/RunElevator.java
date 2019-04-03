@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 
 public class RunElevator extends Command {
 
@@ -14,11 +15,12 @@ public class RunElevator extends Command {
 
   @Override
   protected void initialize() {
-    Robot.elevator.runMotor(direction);
+    Robot.elevator.manualControl(direction, RobotMap.Motors.kZeroingElevatorSpeed);
   }
 
   @Override
   protected void execute() {
+    Robot.elevator.checkLimits(direction);
   }
 
   @Override

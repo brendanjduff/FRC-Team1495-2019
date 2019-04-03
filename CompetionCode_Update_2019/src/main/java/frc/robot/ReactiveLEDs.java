@@ -1,29 +1,22 @@
 package frc.robot;
 
 import java.util.ArrayList;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Notifier;
 
-public class ReactingLeds {
+public class ReactiveLEDs {
 
 	I2C i2;
 
 	public ArrayList<String> cmdQueue = new ArrayList<String>();
-	DigitalInput limit = new DigitalInput(0);
-	DigitalInput limit2 = new DigitalInput(1);
 
 	public class CommandCenter implements java.lang.Runnable {
 		boolean hasArduinoLink = false;
-		boolean lastInnerLimitState = false;
-		boolean lastOuterLimitState = false;
 
 		@Override
 		public void run() {
 			sendToArduino("Z");
-			updateLimitSwitches();
 			if (cmdQueue.size() == 0) {
 
 			} else {
@@ -31,24 +24,12 @@ public class ReactingLeds {
 				cmdQueue.remove(0);
 
 			}
-		}
-
-		public void updateLimitSwitches() {
-			if (limit.get() != lastInnerLimitState && limit.get()) {
-				addCmd("A");
-				lastInnerLimitState = !limit.get();
-			} else if (limit2.get() != lastInnerLimitState && limit2.get()) {
-				addCmd("B");
-			} else {
-				addCmd("C");
-			}
-		}
-		
+		}		
 	}
 
 	Notifier notify = new Notifier(new CommandCenter());
 
-	public ReactingLeds() {
+	public ReactiveLEDs() {
 		i2 = new I2C(Port.kOnboard, 4);
 		// s2 = new SerialPort(0, Port.);
 		notify.startPeriodic(0.05);

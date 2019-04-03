@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 public class Launcher extends Subsystem {
@@ -13,6 +13,8 @@ public class Launcher extends Subsystem {
   public Launcher() {
     leftMotor = new WPI_VictorSPX(RobotMap.CAN.kLauncherLeft);
     rightMotor = new WPI_VictorSPX(RobotMap.CAN.kLauncherRight);
+    leftMotor.setNeutralMode(NeutralMode.Coast);
+    rightMotor.setNeutralMode(NeutralMode.Coast);
   }
 
   public void runMotor(boolean direction) {

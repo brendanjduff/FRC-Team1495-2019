@@ -7,28 +7,25 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class RunBackClimber extends Command {
-
+public class RunClimberWheels extends Command {
+  
   boolean direction;
 
-  public RunBackClimber(boolean d) {
-    requires(Robot.bClimber);
+  public RunClimberWheels(boolean d) {
+    requires(Robot.cWheels);
     direction = d;
   }
 
   @Override
   protected void initialize() {
-    Robot.bClimber.runMotor(direction);
-    Robot.iExtender.setPiston(Value.kForward);
+    Robot.cWheels.runMotor(direction);
   }
 
   @Override
   protected void execute() {
-    Robot.bClimber.checkLimits(direction);
   }
 
   @Override
@@ -38,11 +35,11 @@ public class RunBackClimber extends Command {
 
   @Override
   protected void end() {
-    Robot.bClimber.stopMotor();
+    Robot.cWheels.stopMotor();
   }
 
   @Override
   protected void interrupted() {
-    Robot.bClimber.stopMotor();
+    Robot.cWheels.stopMotor();
   }
 }
