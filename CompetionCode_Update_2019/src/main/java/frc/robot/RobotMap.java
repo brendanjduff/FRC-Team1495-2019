@@ -32,7 +32,7 @@ public class RobotMap {
   public static class DIO {
     public static final int kElevatorLowerBound = 9;
     public static final int kElevatorUpperBound = 6;
-    public static final int kFClimberLowerBound = 2; 
+    public static final int kFClimberLowerBound = 2;
     public static final int kFClimberUpperBound = 1;
     public static final int kBClimberLowerBound = 0; //the one on the top 
     public static final int kBClimberUpperBound = 3; //the one on the bottom
@@ -64,12 +64,12 @@ public class RobotMap {
   }
 
   public class ElevatorControl {
-    public static final int kPositionTolerance = 25000;
+    public static final int kPositionTolerance = (25000*7)/10;
 
-    public static final int kBottomPosition = -15000;
-    public static final int kHatchPanelLevel2 = -1065000;
-    public static final int kCargoShip = -870000;
-    public static final int kCargoRocketLevel1 = -350000;
+    public static final int kBottomPosition = (-15000*7)/10;
+    public static final int kHatchPanelLevel2 = (-1065000*7)/10;
+    public static final int kCargoShip = (-800000*7)/10;
+    public static final int kCargoRocketLevel1 = (-350000*7)/10;
   }
 
   public static final boolean driveMotorSafety = false;

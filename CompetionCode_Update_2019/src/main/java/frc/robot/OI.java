@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.HoldSlowMode;
 import frc.robot.commands.HoldTurboMode;
 import frc.robot.commands.LoadCargoFromGround;
 import frc.robot.commands.MExtenderPiston;
@@ -19,12 +20,11 @@ import frc.robot.commands.RunLauncher;
 import frc.robot.commands.RunLauncherTimed;
 import frc.robot.commands.ToggleDefenseMode;
 import frc.robot.commands.ToggleReverseMode;
-import frc.robot.commands.ToggleSlowMode;
 import frc.robot.commands.ZeroElevator;
 
 public class OI {
 
-  public static XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
+  public XboxController driver = new XboxController(RobotMap.ControllerPort.kDriver);
   public Joystick operator = new Joystick(RobotMap.ControllerPort.kOperator);
   public Joystick climber = new Joystick(RobotMap.ControllerPort.kClimber);
 
@@ -58,7 +58,7 @@ public class OI {
 
   public OI() {  
     turboMode.whileHeld(new HoldTurboMode());                                                                                                                                                                                                                                                                                                                                                     
-    slowMode.whenPressed(new ToggleSlowMode());
+    slowMode.whileHeld(new HoldSlowMode());
     defenseMode.whenPressed(new ToggleDefenseMode());
     reverseMode.whenPressed(new ToggleReverseMode());
 

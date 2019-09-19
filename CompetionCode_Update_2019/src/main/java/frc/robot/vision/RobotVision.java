@@ -1,17 +1,14 @@
 package frc.robot.vision;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.OI;
+import frc.robot.DriveBase;
 import frc.robot.Robot;
-
-import java.util.ArrayList;
-
-import frc.robot.*;
 
 
 public class RobotVision {
@@ -197,6 +194,8 @@ public class RobotVision {
     boolean hasLock = false;
     Timer timing = new Timer();
     Timer timerPanel = new Timer();
+    boolean isReadyToGo = false;
+    boolean onFinal;
     private void visionYawDifferential() {
         int rTargetIndex = -1;
         int lTargetIndex = -1;
@@ -284,42 +283,46 @@ public class RobotVision {
 
                 
 
+                angleDesired = angleCurrent + deltaAngle;
                 if(hasWaited && !hasLock)
                 {
                      timing = new Timer();
                        angleDesired = angleCurrent + deltaAngle;
                       hasWaited = false;
+                      inProgress = true;
                       timing.start();
                 }
-                if(timing.get() > .7)
+                if(targetR.getArea() > 4000 && targetL.getArea() > 4000 ) {
+                    hasLock = true;
+                    xSpeed = .55;
+                    zSpeed = 0;
+                }
+                if(timing.get() > .5)
                 {
                     timing.stop();
                     hasWaited = true;
                 }
 
-                if(targetR.getArea() > 3000 && targetL.getArea() > 3000 && Math.abs(angleCurrent - angleDesired) < 2){
-                    hasLock = true;
-                    xSpeed = .55;
-                    zSpeed = 0;
-                }
-
-                if(Math.abs(angleCurrent - angleDesired) > 2)
+                if ((Math.abs(angleCurrent - angleDesired) > .1 && inProgress) || !onFinal)
                 {
-                    inProgress = true;
+                    xSpeed = .45;
                    
                     if( angleCurrent < angleDesired)
                     {
-                        zSpeed = .4;
+                        zSpeed = .45;
                     }else{
-                        zSpeed = -.4;
+                        zSpeed = -.45;
                     }
 
                 }
                 else{
+                    xSpeed = .5;
                     zSpeed = 0;
                     inProgress = false;
-                    
+                    if(hasLock)
+                        onFinal = true;
                 }
+               
 
 
                 SmartDashboard.putBoolean("Has Locked Target", hasLock);
@@ -339,9 +342,13 @@ public class RobotVision {
 
             DriveBase.roboDrive.arcadeDrive(xSpeed, zSpeed);
 
-          //if (encoderSpeed() == 0 && timerPanel.get() > 2)
-          //    Robot.mExtender.TogglePiston();
+          if (encoderSpeed() == 0 && timerPanel.get() > 2 && !isReadyToGo)
+          {
+              //Robot.manipulator.TogglePiston();
+              isReadyToGo = true;
+          }
 
+            SmartDashboard.putBoolean("GoodToGo", isReadyToGo);
             SmartDashboard.putBoolean("FailedCode", false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -352,10 +359,13 @@ public class RobotVision {
   
     /*
         Returns the speed of the encoder in units, don't worry about unit conversion when implementing
+        Not really speed just to tell it has stopped
     * */
     private double encoderSpeed() {
-        SmartDashboard.putNumber("Speed", DriveBase.rightDriveMaster.getSelectedSensorPosition(0));
-        return DriveBase.rightDriveMaster.getSelectedSensorPosition(0);
+
+        double speed = DriveBase.rightDriveMaster.getSelectedSensorPosition(0) + DriveBase.leftDriveMaster.getSelectedSensorPosition(0);
+        SmartDashboard.putNumber("Speed", speed);
+        return speed;
     }
 
 
@@ -402,8 +412,10 @@ public class RobotVision {
             {
                 timerPanel.start();
                 hasLock = false;
+                inProgress = true;
                 xSpeed = .45;
-            }
+                isReadyToGo = false;
+                onFinal = false;            }
             else
             timerPanel = new Timer();
         }

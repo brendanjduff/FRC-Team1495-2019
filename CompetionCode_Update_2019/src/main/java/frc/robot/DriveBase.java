@@ -1,10 +1,11 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveBase {
@@ -19,6 +20,21 @@ public class DriveBase {
         leftDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kLeftDriveFollower);
         rightDriveMaster = new WPI_TalonSRX(RobotMap.CAN.kRightDriveMaster);
         rightDriveFollower = new WPI_TalonSRX(RobotMap.CAN.kRightDriveFollower);
+
+
+        //Config Encoders
+        rightDriveMaster.configFactoryDefault();
+        rightDriveMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+    
+        rightDriveMaster.setSensorPhase(true);
+        rightDriveMaster.setInverted(false);
+
+        leftDriveMaster.configFactoryDefault();
+        leftDriveMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+    
+        leftDriveMaster.setSensorPhase(true);
+        leftDriveMaster.setInverted(false);
+        
 
         leftDriveMaster.setNeutralMode(NeutralMode.Brake);
         leftDriveFollower.setNeutralMode(NeutralMode.Brake);
@@ -44,16 +60,18 @@ public class DriveBase {
         if (reverseMode) {
             triggerSum = -triggerSum;
         }
+        triggerSum -= oi.climber.getY();
+        double rotationSum = oi.driver.getX(Hand.kLeft) + oi.climber.getX();
 
         if (turboMode) {
             roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kTurboSpeedMultiplier,
-                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+                    rotationSum * RobotMap.Motors.kRotationMultiplier);
         } else if (slowMode) {
             roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSlowSpeedMultiplier,
-                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kSlowRotationMultiplier);
+                    rotationSum * RobotMap.Motors.kSlowRotationMultiplier);
         } else {
             roboDrive.arcadeDrive(triggerSum * RobotMap.Motors.kSpeedMultiplier,
-                    oi.driver.getX(Hand.kLeft) * RobotMap.Motors.kRotationMultiplier);
+                    rotationSum * RobotMap.Motors.kRotationMultiplier);
         }
     }
 

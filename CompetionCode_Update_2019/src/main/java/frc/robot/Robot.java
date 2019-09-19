@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -37,6 +38,7 @@ public class Robot extends TimedRobot {
   public static NavX nav;
   public static RobotVision vision;
   public static NetworkTableInstance ntInst;
+  public static CameraServer cam;
 
   public static boolean defenseMode = false;
 
@@ -56,9 +58,15 @@ public class Robot extends TimedRobot {
     nav = new NavX();
     vision = RobotVision.getInstance();
     ntInst = NetworkTableInstance.getDefault();
+    ntInst.setServerTeam(1495, 1735);
+    ntInst.startServer();
 
     vision.setNtSettingsTable(ntInst.getTable("PiSettings"));
     vision.setNtVisionTable(ntInst.getTable("PiVision"));
+
+    cam = CameraServer.getInstance();
+
+    cam.startAutomaticCapture();
 
     
     oi = new OI();
@@ -114,7 +122,7 @@ public class Robot extends TimedRobot {
 
   private void driveStateUpdate()
   {
-      if(OI.driver.getAButton()){
+      if(oi.driver.getAButton()){
       vision.runVisionGuidanceUpdate(1);
       vision.setGuidanceActive(true);
       }
